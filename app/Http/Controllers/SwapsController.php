@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Swaps;
+use App\Http\MyClasses\VerifyToken;
+
+class SwapsController extends Controller
+{
+    //
+
+    public function getSwaps(Request $req){
+
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else
+        {
+            $swaps = new Swaps();
+            $s = $swaps->getSwapsTab($user->user_id);
+
+            if($s->count() > 0 ){
+                $s = $s->get();
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'isError' => false,
+                    'swaps' => $s
+                ]);
+            }
+            else {
+                $s = $s->get();
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                    'isError' => false,
+                    'swaps' => $s
+                ]);
+            }
+
+        }
+
+    }
+
+    public function unswap(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        $swap_id = $req->input('swap_id');
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else
+        {
+            if($token == null || $swap_id == null){
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isError' => true, 
+                    'isEmpty' => true, 
+                    'message' => 'Arguments must be provide.'
+                ]);
+            }else {
+                $swap = Swaps::where(['swap_id' => $swap_id]);
+                if($swap->count() > 0){
+
+                    if($swap->first()->delete()){
+
+                        return response()->json([
+                            'isAuthenticated' => true,
+                            'isError' => false, 
+                            'isEmpty' => false,
+                            'isFound' => true, 
+                            'isDeSwap' => true, 
+                            'message' => 'Status unswaped.'
+                        ]);
+
+                    } else {
+                        return response()->json([
+                            'isAuthenticated' => true,
+                            'isError' => false, 
+                            'isEmpty' => false,
+                            'isFound' => true, 
+                            'isDeSwap' => false, 
+                            'message' => 'Error occurred in unswaping the status.'
+                        ]);
+                        
+                    }
+
+                } else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isError' => false, 
+                        'isEmpty' => false,
+                        'isFound' => false, 
+                        'isDeSwap' => false, 
+                        'message' => 'Swap not found.'
+                    ]);
+                }
+            }
+        }
+    }
+}
