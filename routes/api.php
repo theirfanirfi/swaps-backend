@@ -46,4 +46,8 @@ Route::get('/login/{data}','LoginController@login')->name('login');
 Route::get('/register/{data}','LoginController@register');
 });
 
+Route::group(['prefix' => 'rating'],function(){
+Route::get('/getStatusRatings','RatingController@getStatusRatings');
+});
+
 Route::get('/check','StatusController@check');
