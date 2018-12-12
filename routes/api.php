@@ -26,6 +26,7 @@ Route::group(['prefix' => 'status/'],function(){
 Route::post('/compose','StatusController@composeStatusPost');
 Route::get('/getStatuses','StatusController@getStatuses');
 Route::get('/rateStatus','StatusController@rateStatus');
+Route::get('/deleteStatus','StatusController@deleteStatus');
 });
 
 
@@ -48,6 +49,11 @@ Route::get('/register/{data}','LoginController@register');
 
 Route::group(['prefix' => 'rating'],function(){
 Route::get('/getStatusRatings','RatingController@getStatusRatings');
+});
+
+
+Route::group(['prefix' => 'profile'],function(){
+Route::post('/updateImage','ProfileController@updateImage');
 });
 
 Route::get('/check','StatusController@check');

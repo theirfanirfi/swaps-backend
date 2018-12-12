@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Auth;
 use App\Models\Statuses;
 use App\Models\Rattings;
+use App\Models\Swaps;
 use App\Http\MyClasses\VerifyToken;
 
 class StatusController extends Controller
@@ -178,6 +179,75 @@ public function rateStatus(Request $req){
                 }
 
           }
+        }
+    }
+
+}
+
+
+public function deleteStatus(Request $req){
+    $token = $req->input('token');
+    $verify = new VerifyToken();
+    $user = $verify->verifyTokenInDb($token);
+    $status_id = $req->input('status_id');
+
+    if(!$user){
+        return response()->json([
+            'isAuthenticated' => false
+        ]);
+    }
+    else {
+        if($token == "" || $status_id == ""){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isEmpty' => true,
+                'message' => "Arguments required."
+            ]);
+        } else {
+            $status = Statuses::where(['status_id' => $status_id]);
+            if($status->count() > 0){
+
+                $swaps = Swaps::where(['status_id' => $status_id]);
+                $ratings = Rattings::where(['status_id' => $status_id]);
+
+                if($swaps->count() > 0){
+                    $swaps->delete();
+                }
+
+                if($ratings->count() > 0){
+                    $ratings->delete();
+                }
+
+                $status = $status->first();
+                if($status->delete()){
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isEmpty' => false,
+                        'isFound' => true,
+                        'isDeleted' => true,
+                        'message' => "Status deleted."
+                    ]);
+                } else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isEmpty' => false,
+                        'isFound' => true,
+                        'isDeleted' => false,
+                        'message' => "Error occurred in deleting the status."
+                    ]);
+                }
+            }
+            else {
+
+            return response()->json([
+                'isAuthenticated' => true,
+                'isEmpty' => false,
+                'isFound' => false,
+                'isDeleted' => false,
+                'message' => "Status does not exist."
+            ]);
+
+            }
         }
     }
 }
