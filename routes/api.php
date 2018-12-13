@@ -53,7 +53,13 @@ Route::get('/getStatusRatings','RatingController@getStatusRatings');
 
 
 Route::group(['prefix' => 'profile'],function(){
+
 Route::post('/updateImage','ProfileController@updateImage');
+Route::get('/updateDescription','ProfileController@updateDescription');
+Route::get('/getProfileStats','ProfileController@getProfileStats');
+Route::get('/updateProfileDetails','ProfileController@updateProfileDetails');
+Route::get('/changePassword','ProfileController@changePassword');
+
 });
 
 Route::get('/check','StatusController@check');
