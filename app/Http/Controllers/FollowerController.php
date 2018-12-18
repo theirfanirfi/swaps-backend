@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\MyClasses\VerifyToken;
 use App\Models\Followers;
 use App\Models\Swaps;
+use App\Models\Notifications;
 
 class FollowerController extends Controller
 {
@@ -46,7 +47,9 @@ class FollowerController extends Controller
                         $sw = $swaps->get();
                         return response()->json([
                              'isAuthenticated' => true,
-                             'isFound' => true,
+                              'isFound' => true,
+                             'isFollowersFound' => true,
+                              'isSwapsFound' => true,
                               'followers' => $fl,
                               'isSwaps' => true,
                               'swaps' => $sw,
@@ -61,6 +64,8 @@ class FollowerController extends Controller
                         return response()->json([
                              'isAuthenticated' => true,
                              'isFound' => true,
+                             'isSwapsFound' => false,
+                             'isFollowersFound' => true,
                               'followers' => $fl,
                               'isSwaps' => false,
                               'swaps' => $sw,
@@ -77,6 +82,7 @@ class FollowerController extends Controller
                     'isAuthenticated' => true,
                     'isFound' => false,
                     'status_id' => $status_id,
+                    'isFollowersFound' => false,
                     'message' => 'You have not followed any user yet.'
                 ]); 
                 }
@@ -128,12 +134,21 @@ class FollowerController extends Controller
 
                 if($sw->save())
                 {
+                $noti = new Notifications();
+                $noti->isStatus = 1;
+                $noti->status_id = $status_id;
+                $noti->swaper_id = $user->user_id;
+                $noti->swaped_with_id = $swaped_with_user_id;
+                $noti->swap_id = $sw->swap_id;
+                $noti->is_accepted = 0;
+                $noti->save();
+
                     return response()->json([
                         'isAuthenticated' => true,
                         'isSwaped' => true,
                         'isAlready' => false,
-                    'isError' => false,
-                        'message' => 'Status is swaped.'
+                        'isError' => false,
+                        'message' => 'Status swap request is sent.'
                     ]);
                 }
                 else 

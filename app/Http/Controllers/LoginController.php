@@ -169,6 +169,8 @@ class LoginController extends Controller
             $user->email = $email;
             $user->username = $username;
             $user->password = Hash::make($password);
+            $token = Hash::make(base64_encode($name.":".time()));
+            $user->token = $token;
 
             if($user->save())
             {

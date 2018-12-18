@@ -163,6 +163,34 @@ class ProfileController extends Controller
         }
     }
 
+    public function getProfileUserStats(Request $req){
+        $user_id = $req->input('id');
+            if($user_id == ""){
+                return response()->json([
+                    'isEmpty' => true,
+                    'isError' => true,
+                    'isAuthenticated' => true,
+                    'message' => 'Arguments required.'
+                ]);
+            } else {
+                $swaps = Swaps::where(['poster_user_id' => $user_id])->count();
+                $status = Statuses::where(['user_id' => $user_id])->count();
+                $followers = Followers::where(['followed_user_id' => $user_id])->count();
+                $user = User::where(['user_id' => $user_id])->select('profile_image','name','user_id')->first();
+
+                return response()->json([
+                    'isEmpty' => false,
+                    'isError' => false,
+                    'isFound' => true,
+                    'swaps' => $swaps,
+                    'statuses' => $status,
+                    'followers' => $followers,
+                    'user' => $user,
+                    'isAuthenticated' => true,
+                ]);
+            }
+        
+    }
     public function updateProfileDetails(Request $req){
         $token = $req->input('token');
         $name = $req->input('name');

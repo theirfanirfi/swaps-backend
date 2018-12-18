@@ -25,6 +25,7 @@ Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
 Route::group(['prefix' => 'status/'],function(){
 Route::post('/compose','StatusController@composeStatusPost');
 Route::get('/getStatuses','StatusController@getStatuses');
+Route::get('/getUserStatuses','StatusController@getUserStatuses');
 Route::get('/rateStatus','StatusController@rateStatus');
 Route::get('/deleteStatus','StatusController@deleteStatus');
 });
@@ -39,7 +40,9 @@ Route::get('/deSwapStatus','FollowerController@deSwapStatus');
 
 Route::group(['prefix' => 'swaps'],function(){
 Route::get('/','SwapsController@getSwaps');
+Route::get('/user','SwapsController@getUserSwaps');
 Route::get('/unswap','SwapsController@unswap');
+Route::get('/getSwap','SwapsController@getSwap');
 });
 
 Route::group(['prefix' => 'auth/'],function(){
@@ -57,9 +60,17 @@ Route::group(['prefix' => 'profile'],function(){
 Route::post('/updateImage','ProfileController@updateImage');
 Route::get('/updateDescription','ProfileController@updateDescription');
 Route::get('/getProfileStats','ProfileController@getProfileStats');
+Route::get('/getProfileUserStats','ProfileController@getProfileUserStats');
 Route::get('/updateProfileDetails','ProfileController@updateProfileDetails');
 Route::get('/changePassword','ProfileController@changePassword');
 
+});
+
+Route::group(['prefix' => 'notifications'],function(){
+Route::get('/getNotifications','NotificationController@getNotifications');
+Route::get('/getNotificationsCount','NotificationController@getNotificationsCount');
+Route::get('/approveSwap','NotificationController@approveSwap');
+Route::get('/clear','NotificationController@clear');
 });
 
 Route::get('/check','StatusController@check');

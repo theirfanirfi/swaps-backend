@@ -37,4 +37,6 @@ class Rattings extends Model
         ->leftjoin('users',['users.user_id' => 'statuses.user_id'])
         ->select('users.name','users.username','users.profile_image','users.user_id','status','status_id','statuses.created_at');
     }
+
+    //public function getSwap()
 }

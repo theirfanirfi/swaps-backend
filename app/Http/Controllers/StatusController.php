@@ -87,10 +87,10 @@ public function getStatuses(Request $req)
             {
                 $st = $st->get();
                return response()->json([
-                    'isAuthenticated' => true,
-                    'isFound' => true,
+                     'isAuthenticated' => true,
+                     'isFound' => true,
                      'statuses' => $st,
-                    'message' => 'loading....'
+                     'message' => 'loading....'
                 ]);
             }
             else
@@ -250,6 +250,32 @@ public function deleteStatus(Request $req){
             }
         }
     }
+}
+
+
+public function getUserStatuses(Request $req)
+{
+        $user_id = $req->input('id');
+      
+            $statuses = new Statuses();
+            $st =  $statuses->getUserStatuses($user_id);
+            if($st->count() > 0){
+                $st = $st->get();
+               return response()->json([
+                     'isAuthenticated' => true,
+                     'isFound' => true,
+                     'statuses' => $st,
+                     'message' => 'loading....'
+                ]);
+            }
+            else{
+               return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                    'message' => 'The User has not posted any status yet.'
+                ]); 
+            }
+
 }
 
 //time difference

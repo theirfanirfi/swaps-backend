@@ -15,9 +15,10 @@ class Statuses extends Model
         $statuses = DB::table('statuses')
         ->where(['statuses.user_id' => $user_id])
         ->leftjoin('rattings','rattings.status_id','=','statuses.status_id')
-        ->select('status','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
+        ->select('status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
         ->groupby('status')
         ->groupby('statuses.status_id')
+        ->groupby('statuses.user_id')
         ->groupby('statuses.created_at')
         ->orderBy('statuses.status_id','DESC');
         return $statuses;    
@@ -41,5 +42,22 @@ class Statuses extends Model
 // "profile_image": null,
 
 
+    }
+
+    public function getUserStatuses($user_id){
+
+        $statuses = DB::table('statuses')
+        ->where(['statuses.user_id' => $user_id])
+        ->leftjoin('rattings','rattings.status_id','=','statuses.status_id')
+        ->leftjoin('users',['users.user_id' => 'statuses.user_id'])
+        ->select('profile_image','status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
+        ->groupby('status')
+        ->groupby('profile_image')
+        ->groupby('statuses.status_id')
+        ->groupby('statuses.user_id')
+        ->groupby('statuses.created_at')
+        ->orderBy('statuses.status_id','DESC');
+        return $statuses;    
+        
     }
 }

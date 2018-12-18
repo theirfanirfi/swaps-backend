@@ -54,14 +54,12 @@ class RatingController extends Controller
                     ]);
 
                 }else {
-                   $rt = $rating->get();
 
                     return response()->json([
                         'isAuthenticated' => true,
                         'isError' => false, 
                         'isEmpty' => false, 
                         'isFound' => false,
-                        'raters' => $rt,
                         'status' => $status,
                         'swaps_count' => $swaps_count,
                         'average_rating' => $average_rating->avg_rating,
