@@ -35,6 +35,9 @@ Route::group(['prefix' => 'followers'],function(){
 Route::get('/','FollowerController@getFollowers');
 Route::get('/swapStatus','FollowerController@swapStatus');
 Route::get('/deSwapStatus','FollowerController@deSwapStatus');
+Route::get('/isfollow','FollowerController@isfollow');
+Route::get('/follow','FollowerController@follow');
+Route::get('/unfollow','FollowerController@unfollow');
 
 });
 

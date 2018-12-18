@@ -165,6 +165,12 @@ class ProfileController extends Controller
 
     public function getProfileUserStats(Request $req){
         $user_id = $req->input('id');
+        $token = $req->input('token');
+
+        $tuser = "";
+
+     
+
             if($user_id == ""){
                 return response()->json([
                     'isEmpty' => true,
@@ -177,8 +183,30 @@ class ProfileController extends Controller
                 $status = Statuses::where(['user_id' => $user_id])->count();
                 $followers = Followers::where(['followed_user_id' => $user_id])->count();
                 $user = User::where(['user_id' => $user_id])->select('profile_image','name','user_id')->first();
-
-                return response()->json([
+        if($token != ""){
+        $verify = new VerifyToken();
+        $tuser = $verify->verifyTokenInDb($token);
+                if(!$tuser){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else {
+ $isfollow = Followers::where(['followed_user_id' => $user_id, 'follower_user_id' => $tuser->user_id])->count();
+ return response()->json([
+                    'isEmpty' => false,
+                    'isError' => false,
+                    'isFound' => true,
+                    'swaps' => $swaps,
+                    'statuses' => $status,
+                    'followers' => $followers,
+                    'user' => $user,
+                    'isfollow'=> $isfollow,
+                    'isAuthenticated' => true,
+                ]);
+        }
+        }else {
+                 return response()->json([
                     'isEmpty' => false,
                     'isError' => false,
                     'isFound' => true,
@@ -188,6 +216,9 @@ class ProfileController extends Controller
                     'user' => $user,
                     'isAuthenticated' => true,
                 ]);
+        }
+               
+           
             }
         
     }

@@ -7,6 +7,7 @@ use App\Http\MyClasses\VerifyToken;
 use App\Models\Followers;
 use App\Models\Swaps;
 use App\Models\Notifications;
+use App\User;
 
 class FollowerController extends Controller
 {
@@ -220,6 +221,188 @@ class FollowerController extends Controller
                     'isExist' => false,
                     'message' => "Status does not exist."
                 ]);  
+
+            }
+        }
+    }
+
+
+    public function isfollow(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        $profile_id = $req->input('id');
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else
+        {
+            if($profile_id == "" || $token == "")
+            {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'isEmpty' => true,
+                    'message' => "Arguments must be provided."
+                ]);
+            }
+            else {
+                $follower = Followers::where(['followed_user_id' => $profile_id, 'follower_user_id' => $user->user_id]);
+                if($follower->count() > 0){
+
+                    return response()->json([
+                    'isAuthenticated' => true,
+                    'isEmpty' => false,
+                    'isFollowed' => true,
+                    'message' => "Already followed"
+                ]);
+
+                }
+                else {
+              return response()->json([
+                                'isAuthenticated' => true,
+                                'isEmpty' => false,
+                                'isFollowed' => false,
+                                'message' => "You have not followed."
+                            ]);
+                }
+            }
+        }
+    }
+
+    public function follow(Request $req){
+          $token = $req->input('token');
+        $to_be_followed = $req->input('id');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else if($token == "" || $to_be_followed == ""){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => true,
+                'message' => 'None of the argument can be empty.'
+            ]); 
+        }else {
+            $follow = Followers::where(['followed_user_id' => $to_be_followed,'follower_user_id' => $user->user_id]);
+            $userr = User::where(['user_id' => $to_be_followed]);
+            if($follow->count() > 0){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyFollowed' => true,
+                'isFollowed' => false,
+                'message' => 'You have already followed.'
+            ]);
+        }
+            else if($userr->count() <= 0){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyFollowed' => true,
+                'isFollowed' => false,
+                'message' => 'The user does not exist.'
+            ]);
+            }else {
+                $f = new Followers();
+                $f->followed_user_id = $to_be_followed;
+                $f->follower_user_id = $user->user_id;
+
+                if($f->save()){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => false,
+                'isEmpty' => false,
+                'isAlreadyFollowed' => false,
+                'isFollowed' => true,
+                'message' => 'You are now following the user.'
+            ]);
+                }else {
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyFollowed' => false,
+                'isFollowed' => false,
+                'message' => 'Error occurred in following the user. Try again.'
+            ]);
+                }
+
+            }
+        }
+    }
+
+
+     public function unfollow(Request $req){
+          $token = $req->input('token');
+        $to_un_be_followed = $req->input('id');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else if($token == "" || $to_un_be_followed == ""){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => true,
+                'message' => 'None of the argument can be empty.'
+            ]); 
+        }else {
+            $follow = Followers::where(['followed_user_id' => $to_un_be_followed,'follower_user_id' => $user->user_id]);
+            $userr = User::where(['user_id' => $to_un_be_followed]);
+            if($follow->count() <= 0){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyUnFollowed' => true,
+                'isUnFollowed' => false,
+                'message' => 'You have already unfollowed.'
+            ]);
+        }
+            else if($userr->count() <= 0){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyUnFollowed' => false,
+                'isUnFollowed' => false,
+                'message' => 'The user does not exist.'
+            ]);
+            }else {
+
+                if($follow->delete()){
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => false,
+                'isEmpty' => false,
+                'isAlreadyUnFollowed' => false,
+                'isUnFollowed' => true,
+                'message' => 'User is unfollowed.'
+            ]);
+                }else {
+            return response()->json([
+                'isAuthenticated' => true,
+                'isError' => true,
+                'isEmpty' => false,
+                'isAlreadyFollowed' => false,
+                'isFollowed' => false,
+                'message' => 'Error occurred in unfollowing the user. Try again.'
+            ]);
+                }
 
             }
         }
