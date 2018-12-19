@@ -76,4 +76,8 @@ Route::get('/approveSwap','NotificationController@approveSwap');
 Route::get('/clear','NotificationController@clear');
 });
 
+Route::group(['prefix' => 'participants'],function(){
+Route::get('/','ParticipantsController@getParticipants');
+});
+
 Route::get('/check','StatusController@check');
