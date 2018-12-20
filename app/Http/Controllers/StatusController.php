@@ -41,7 +41,7 @@ class StatusController extends Controller
                     $status = new Statuses();
                     $status->user_id = $user->user_id;
                     $status->status = $post;
-    date_default_timezone_set("Asia/Karachi");
+                 date_default_timezone_set("Asia/Karachi");
                     $status->posting_time = time();
 
 

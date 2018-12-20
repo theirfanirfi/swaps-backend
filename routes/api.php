@@ -80,4 +80,11 @@ Route::group(['prefix' => 'participants'],function(){
 Route::get('/','ParticipantsController@getParticipants');
 });
 
+Route::group(['prefix' => 'msg'],function(){
+
+Route::get('/','MessageController@getMessages');
+Route::get('/send','MessageController@sendMessage');
+
+});
+
 Route::get('/check','StatusController@check');
