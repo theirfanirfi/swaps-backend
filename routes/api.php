@@ -38,6 +38,7 @@ Route::get('/deSwapStatus','FollowerController@deSwapStatus');
 Route::get('/isfollow','FollowerController@isfollow');
 Route::get('/follow','FollowerController@follow');
 Route::get('/unfollow','FollowerController@unfollow');
+Route::get('/users','FollowerController@getUsers');
 
 });
 

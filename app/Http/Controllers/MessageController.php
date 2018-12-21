@@ -10,6 +10,11 @@ class MessageController extends Controller
 {
     //
 
+
+
+
+    ///end
+
     public function sendMessage(Request $req){
     	$token = $req->input('token');
 		 $TO_CHAT_WITH = $req->input('id');

@@ -407,4 +407,59 @@ class FollowerController extends Controller
             }
         }
     }
+
+
+
+
+    //start
+
+        public function getUsers(Request $req){
+        $token = $req->input('token');
+
+         if($token == null){
+     return response()->json([
+                'isAuthenticated' => false,
+                'isEmpty' => true,
+                'isError' => true,
+                'message' => 'Arguments must be provided.'
+            ]);
+    }else {
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isEmpty' => false,
+                'isError' => true,
+                'message' => 'Not authenticated'
+            ]);
+        }
+        else
+        {
+            $f = new Followers();
+            $users = $f->getUsers($user->user_id);
+            if($users->count() > 0){
+
+                return response()->json([
+                'isAuthenticated' => true,
+                'isEmpty' => false,
+                'isError' => false,
+                'isFound' => true,
+                'message' => 'loading..',
+                'followers' => $users->get()
+            ]);
+
+            }else {
+                return response()->json([
+                'isAuthenticated' => true,
+                'isEmpty' => false,
+                'isError' => false,
+                'isFound' => false,
+                'message' => 'No User found.'
+            ]);
+            }
+        }
+    }
+    }
 }

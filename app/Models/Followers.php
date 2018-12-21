@@ -22,4 +22,20 @@ class Followers extends Model
     public function getSwaps($user_id, $status_id){
         return Swaps::where(['poster_user_id' => $user_id, 'status_id' => $status_id])->select('swap_id','swaped_with_user_id','status_id');
     }
+
+    public function getUsers($user_id){
+        $one =  DB::table('users')->where('user_id','!=',$user_id)->select('users.user_id','name','profile_image')
+        ->leftjoin('followers',['follower_user_id' => 'users.user_id'])
+->select('users.user_id','name','profile_image','f_id','follower_user_id','followed_user_id',DB::raw("IF(follower_user_id ='".$user_id."',true,false) as haveIFollowed"))
+        ;
+        // ->leftjoin('followers','follower_user_id','=','users.user_id')
+        // ->select('users.user_id','name','profile_image','f_id','follower_user_id','followed_user_id',DB::raw("IF(follower_user_id ='".$user_id."',true,false) as haveIFollowed"));
+        return $one;
+    }
+
+    public function union($user_id){
+        $one =  DB::table('users')->where('user_id','!=',$user_id)->select('users.user_id','name','profile_image');
+        $two =  DB::table('followers as follow')->select('follow.f_id as f_id','follow.follower_user_id as fid',' follow.followed_user_id as fdd');
+        return $one->union($two);
+    }
 }
