@@ -51,6 +51,7 @@ class StatusController extends Controller
                             'isAuthenticated' => true,
                             'isEmpty' => false,
                             'isPosted' => true,
+                            'obj_status' => $status,
                             'message' => "Status Posted."
                         ]);
                     }
