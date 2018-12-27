@@ -88,4 +88,10 @@ Route::get('/send','MessageController@sendMessage');
 
 });
 
+//upload status attachments
+
+Route::group(['prefix' => 'attachments'],function(){
+Route::post('send','AttachmentController@send');
+});
+
 Route::get('/check','StatusController@check');
