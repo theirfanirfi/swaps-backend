@@ -8,6 +8,7 @@ use Auth;
 use App\Models\Statuses;
 use App\Models\Rattings;
 use App\Models\Swaps;
+use App\Models\Attachments;
 use App\Http\MyClasses\VerifyToken;
 
 class StatusController extends Controller
@@ -279,6 +280,60 @@ public function getUserStatuses(Request $req)
 
 }
 
+
+public function getStatusAttachments(Request $req){
+    $token = $req->input('token');
+    $verify = new VerifyToken();
+    $user = $verify->verifyTokenInDb($token);
+    $status_id = $req->input('status_id');
+
+    if($token == null || $status_id == null){
+        return response()->json([
+            'isError' => true,
+            'isEmtpy' => true,
+            'message' => 'Arguments must be provided.'
+        ]);
+    }
+    else {
+    if(!$user){
+        return response()->json([
+            'isAuthenticated' => false,
+            'isError' => true,
+            'message' => 'You are not loggedin. Please login and try again.'
+        ]);
+    }
+    else if(!$verify->BelongToUserOrNot($status_id,$user->user_id)){
+            return response()->json([
+            'isAuthenticated' => true,
+            'isError' => true,
+            'message' => 'The status does not belong to you.'
+        ]); 
+    }
+    else {
+        $attachments = Attachments::where(['status_id' => $status_id]);
+
+        if($attachments->count() > 0){
+            $att = $attachments->get();
+            return response()->json([
+            'isAuthenticated' => true,
+            'isError' => false,
+            'isFound' => true,
+            'attachments' => $att,
+            'message' => 'The attachments are being loaded..'
+        ]);
+        }else {
+            return response()->json([
+            'isAuthenticated' => true,
+            'isError' => false,
+            'isFound' => false,
+            'message' => 'The status has no attachments'
+        ]);
+        }
+    }
+
+}
+}
+
 //time difference
 public function check()
 {
@@ -287,5 +342,7 @@ $date1=date_create("2018-12-08 22:23:25");
 $diff=date_diff($date1,$date2);
 echo $diff->format("%y - %m - %d %h %i %s");
 }
+
+
 
 }

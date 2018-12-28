@@ -74,7 +74,7 @@ class AttachmentController extends Controller
                 	if($media->save()){
 
 			          	return response()->json([
-			    			'isError' => true,
+			    			'isError' => false,
 			    			'isAuthenticated' => true,
 			    			'isSaved' => true,
 			    			'message' => 'uploaded'
@@ -125,7 +125,7 @@ class AttachmentController extends Controller
                 	if($media->save()){
 
 			          	return response()->json([
-			    			'isError' => true,
+			    			'isError' => false,
 			    			'isAuthenticated' => true,
 			    			'isSaved' => true,
 			    			'message' => 'uploaded'

@@ -28,6 +28,7 @@ Route::get('/getStatuses','StatusController@getStatuses');
 Route::get('/getUserStatuses','StatusController@getUserStatuses');
 Route::get('/rateStatus','StatusController@rateStatus');
 Route::get('/deleteStatus','StatusController@deleteStatus');
+Route::get('/attachments','StatusController@getStatusAttachments');
 });
 
 

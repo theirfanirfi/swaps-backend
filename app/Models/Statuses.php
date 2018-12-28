@@ -14,8 +14,11 @@ class Statuses extends Model
 
         $statuses = DB::table('statuses')
         ->where(['statuses.user_id' => $user_id])
+        ->leftjoin('attachments',['attachments.status_id' => 'statuses.status_id'])
         ->leftjoin('rattings','rattings.status_id','=','statuses.status_id')
-        ->select('status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
+        ->select('attachment_id','attachment_url','status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
+        ->groupby('attachment_id')
+        ->groupby('attachment_url')
         ->groupby('status')
         ->groupby('statuses.status_id')
         ->groupby('statuses.user_id')
