@@ -22,6 +22,11 @@ class VerifyToken {
         $status = Statuses::where(['user_id' => $user_id,'status_id' => $status_id]);
         return $status->count() > 0 ? true : false;
     }
+
+        public function BelongToUserOrNotStatusReturn($status_id,$user_id){
+        $status = Statuses::where(['user_id' => $user_id,'status_id' => $status_id]);
+        return $status->count() > 0 ? $status->first() : false;
+    }
 }
 
 ?>

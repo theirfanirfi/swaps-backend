@@ -95,4 +95,41 @@ Route::group(['prefix' => 'attachments'],function(){
 Route::post('send','AttachmentController@send');
 });
 
-Route::get('/check','StatusController@check');
+//Route::get('/check','StatusController@check');
+
+Route::get('/check',function(){
+	//$arr = '["http:\/\/192.168.10.5\/swap\/public\/statuses\/videos\/Irfan Ullah31545909822"]';
+	// $arr[] = "http://192.168.10.5/swap/public/statuses/videos/Irfan Ullah31545909822";
+	// $arr[] = "http://192.168.10.5/swap/public/statuses/videos/Irfan Ullah31545909822";
+	// $arr[] = "http://192.168.10.5/swap/public/statuses/videos/Irfan Ullah31545909822";
+	//$arr = '{"res":"http:\\\/\\\/192.168.10.5\\\/swap\\\/public\\\/statuses\\\/videos\\\/Irfan Ullah31545909822","type":2}';
+	//$arr = json_decode($arr);
+
+
+	$an['res'] = 'http:\/\/192.168.10.5\/swap\/public\/statuses\/videos\/Irfan Ullah31545909822';
+	$an['type'] = 1; 
+	$and[] = $an;
+	echo json_encode($and);
+
+	// echo json_encode($arr);
+	echo "<br/>";
+
+	$b['res'] = "some value";
+	$b['type'] = 2;
+	$and[] = $b;
+	echo json_encode($and);
+	echo "<br/>";
+	echo "<br/>";
+
+	$encoded = '[{"res":"http:\\\/\\\/192.168.10.5\\\/swap\\\/public\\\/statuses\\\/videos\\\/Irfan Ullah31545909822","type":1},{"res":"some value","type":2}]';
+	$band = json_decode($encoded);
+		$b['res'] = "some another value";
+	$b['type'] = 3;
+
+	$band[] = $b;
+	echo json_encode($band);
+		// $a = array();
+	// $a = json_decode($arr);
+	// echo $a;
+	//echo $arr;
+});

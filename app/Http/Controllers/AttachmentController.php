@@ -21,7 +21,7 @@ class AttachmentController extends Controller
     		return response()->json([
     			'isError' => true,
     			'isEmpty' => true,
-    			'message' => 'Argument must be provided.'
+    			'message' => 'Argument must be provided.' 
     		]);
                 
     	}else {
@@ -30,7 +30,7 @@ class AttachmentController extends Controller
     	
     	$verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
-
+        $status = $verify->BelongToUserOrNotStatusReturn($status_id,$user->user_id);
         //if not verified
         if(!$user){
         	    return response()->json([
@@ -44,9 +44,8 @@ class AttachmentController extends Controller
 
         	//check - does the status belong to the user trying to upload attachments or not.
 
-        	if(!$verify->BelongToUserOrNot($status_id,$user->user_id))
+        	if(!$status)
         	{
-
         		//status does not belong to the loggedin user
         	return response()->json([
     			'isError' => true,
@@ -62,31 +61,62 @@ class AttachmentController extends Controller
     		//upload image
 			   	$file = $req->file('image');
                 $path = "./statuses/images/";
-                $file_name = $user->name.$user->user_id.time();
+                $file_name = $user->username.$user->user_id.time().".png";
 
                 if($file->move($path,$file_name)){
                 	//file uploaded; save the details to the db
-                	$media = new Attachments();
-                	$media->user_id = $user->user_id;
-                	$media->status_id = $status_id;
-                	$media->attachment_type = 1; // 1 is image
-                	$media->attachment_url = asset("statuses/images/")."/".$file_name;
-                	if($media->save()){
 
-			          	return response()->json([
-			    			'isError' => false,
-			    			'isAuthenticated' => true,
-			    			'isSaved' => true,
-			    			'message' => 'uploaded'
-			    		]);
+                     if($status->has_attachment == 1){
+                        $att = $status->attachments;
+                        $json = json_decode($att);
+                        $arr['attachment_url'] = asset("statuses/images/")."/".$file_name;
+                        $arr['attachment_type'] = 1; 
+                        $json[] = $arr;
+                        $status->attachments = json_encode($json);
+                     } else {
+                        $status->has_attachment = 1;
+                        $arr['attachment_url'] = asset("statuses/images/")."/".$file_name;
+                        $arr['attachment_type'] = 1; 
+                        $json[] = $arr;
+                        $status->attachments = json_encode($json);
+                     }
 
-                	}else {
-			              return response()->json([
-			    			'isError' => true,
-			    			'isAuthenticated' => true,
-			    			'message' => 'Error occurred in uploading the attachment.'
-			    		]);
-                	}
+                     if($status->save()){
+                         return response()->json([
+                         'isError' => false,
+                         'isAuthenticated' => true,
+                         'isSaved' => true,
+                         'message' => 'uploaded'
+                        ]);
+                     }else {
+                        return response()->json([
+                         'isError' => true,
+                         'isAuthenticated' => true,
+                         'message' => 'Error occurred in uploading the attachment.'
+                        ]);
+                     }
+
+         //        	$media = new Attachments();
+         //        	$media->user_id = $user->user_id;
+         //        	$media->status_id = $status_id;
+         //        	$media->attachment_type = 1; // 1 is image
+         //        	$media->attachment_url = asset("statuses/images/")."/".$file_name;
+         //        	if($media->save()){
+
+			      //     	return response()->json([
+			    		// 	'isError' => false,
+			    		// 	'isAuthenticated' => true,
+			    		// 	'isSaved' => true,
+			    		// 	'message' => 'uploaded'
+			    		// ]);
+
+         //        	}else {
+			      //         return response()->json([
+			    		// 	'isError' => true,
+			    		// 	'isAuthenticated' => true,
+			    		// 	'message' => 'Error occurred in uploading the attachment.'
+			    		// ]);
+         //        	}
 
                 }else {
                 	//file not uploaded.
@@ -117,28 +147,36 @@ class AttachmentController extends Controller
 
                 if($file->move($path,$file_name)){
                 	//file uploaded; save the details to the db
-                	$media = new Attachments();
-                	$media->user_id = $user->user_id;
-                	$media->status_id = $status_id;
-                	$media->attachment_type = 2; //2 is video
-                	$media->attachment_url = asset("statuses/videos/")."/".$file_name;
-                	if($media->save()){
+         
+                     if($status->has_attachment == 1){
+                        $att = $status->attachments;
+                        $json = json_decode($att);
+                        $arr['attachment_url'] = asset("statuses/videos/")."/".$file_name;
+                        $arr['attachment_type'] = 2; 
+                        $json[] = $arr;
+                        $status->attachments = json_encode($json);
+                     } else {
+                        $status->has_attachment = 1;
+                        $arr['attachment_url'] = asset("statuses/videos/")."/".$file_name;
+                        $arr['attachment_type'] = 2; 
+                        $json[] = $arr;
+                        $status->attachments = json_encode($json);
+                     }
 
-			          	return response()->json([
-			    			'isError' => false,
-			    			'isAuthenticated' => true,
-			    			'isSaved' => true,
-			    			'message' => 'uploaded'
-			    		]);
-
-                	}else {
-			              return response()->json([
-			    			'isError' => true,
-			    			'isAuthenticated' => true,
-			    			'message' => 'Error occurred in uploading the attachment.'
-			    		]);
-                	}
-
+                     if($status->save()){
+                         return response()->json([
+                         'isError' => false,
+                         'isAuthenticated' => true,
+                         'isSaved' => true,
+                         'message' => 'uploaded'
+                        ]);
+                     }else {
+                        return response()->json([
+                         'isError' => true,
+                         'isAuthenticated' => true,
+                         'message' => 'Error occurred in uploading the attachment.'
+                        ]);
+                     }
                 }else {
                 	//file not uploaded.
               return response()->json([
