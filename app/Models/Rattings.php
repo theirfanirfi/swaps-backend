@@ -35,7 +35,7 @@ class Rattings extends Model
         return DB::table('statuses')->where(['status_id' => $status_id])
 
         ->leftjoin('users',['users.user_id' => 'statuses.user_id'])
-        ->select('users.name','users.username','users.profile_image','users.user_id','status','status_id','statuses.created_at');
+        ->select('users.name','users.username','users.profile_image','users.user_id','status','status_id','statuses.created_at','has_attachment','attachments');
     }
 
     //public function getSwap()
