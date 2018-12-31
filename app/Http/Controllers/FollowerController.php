@@ -462,4 +462,10 @@ class FollowerController extends Controller
         }
     }
     }
+
+
+    public function getF(){
+        $f = new Followers();
+        echo $f->getUsersFor(3)->get();
+    }
 }

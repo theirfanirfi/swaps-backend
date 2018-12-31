@@ -38,4 +38,12 @@ class Followers extends Model
         $two =  DB::table('followers as follow')->select('follow.f_id as f_id','follow.follower_user_id as fid',' follow.followed_user_id as fdd');
         return $one->union($two);
     }
+
+    public function getUsersFor($user_id){
+        $users = DB::table('users as us')->where('user_id','!=',$user_id)->select('user_id','name','username','profile_image as pf');
+
+        $followers = DB::table('followers')->select('f_id','follower_user_id','followed_user_id',DB::raw("IF(followers.follower_user_id = '".$user_id."',true,false) as haveIFollowed"));
+
+        return $followers->union($users);
+    }
 }

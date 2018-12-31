@@ -27,7 +27,7 @@ class Swaps extends Model
     
     ->select('swap_id','swaps.is_accepted','users.user_id as poster_user_id','swaped_with.user_id as swaped_with_user_id',
 
-    'users.name as poster_user_name','swaped_with.name as swaped_with_user_name', 'status',
+    'users.name as poster_user_name','swaped_with.name as swaped_with_user_name', 'status','has_attachment','attachments',
 
     'swaps.status_id','swaps.created_at as swap_date', 'users.profile_image as poster_profile_image', 'swaped_with.profile_image as swaped_with_profile_image',
     
@@ -40,6 +40,8 @@ class Swaps extends Model
     ->groupby('users.name')
     ->groupby('swaped_with.name')
     ->groupby('status')
+    ->groupby('has_attachment')
+    ->groupby('attachments')
     ->groupby('swaps.created_at')
     ->groupby('users.profile_image')
     ->groupby('swaped_with.profile_image')
