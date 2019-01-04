@@ -40,10 +40,8 @@ class Followers extends Model
     }
 
     public function getUsersFor($user_id){
-        $users = DB::table('users as us')->where('user_id','!=',$user_id)->select('user_id','name','username','profile_image as pf');
-
-        $followers = DB::table('followers')->select('f_id','follower_user_id','followed_user_id',DB::raw("IF(followers.follower_user_id = '".$user_id."',true,false) as haveIFollowed"));
-
-        return $followers->union($users);
+        $users = DB::table('users')
+        ->leftjoin('followers','followers.follower_user_id','!=',$user_id);
+        return $users;
     }
 }

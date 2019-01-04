@@ -96,28 +96,6 @@ class AttachmentController extends Controller
                         ]);
                      }
 
-         //        	$media = new Attachments();
-         //        	$media->user_id = $user->user_id;
-         //        	$media->status_id = $status_id;
-         //        	$media->attachment_type = 1; // 1 is image
-         //        	$media->attachment_url = asset("statuses/images/")."/".$file_name;
-         //        	if($media->save()){
-
-			      //     	return response()->json([
-			    		// 	'isError' => false,
-			    		// 	'isAuthenticated' => true,
-			    		// 	'isSaved' => true,
-			    		// 	'message' => 'uploaded'
-			    		// ]);
-
-         //        	}else {
-			      //         return response()->json([
-			    		// 	'isError' => true,
-			    		// 	'isAuthenticated' => true,
-			    		// 	'message' => 'Error occurred in uploading the attachment.'
-			    		// ]);
-         //        	}
-
                 }else {
                 	//file not uploaded.
               return response()->json([

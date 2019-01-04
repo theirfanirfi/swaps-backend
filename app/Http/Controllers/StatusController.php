@@ -15,6 +15,52 @@ class StatusController extends Controller
 {
     //
 
+    public function getStatus(Request $req){
+        $token = $req->input('token');
+        $status_id = $req->input('status_id');
+
+        if($token == null || $status_id == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'isEmpty' => true,
+                'message' => "Arguments must be provided."
+            ]);
+        }else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+            if(!$user){
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'message' => "You are not loggedin. Please login and try again."
+                ]);
+            }else {
+                $status = Statuses::where(['status_id' => $status_id]);
+                if($status->count() > 0){
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isError' => false,
+                        'isEmpty' => false,
+                        'isFound' => true,
+                        'obj_status'  => $status->first(),
+                        'message' => "loading..."
+                    ]);
+                }else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isError' => true,
+                        'isEmpty' => false,
+                        'message' => "No status found."
+                    ]);
+
+                }
+
+            }
+        }
+
+
+    }
+
     public function composeStatusPost(Request $req)
     {
         $token = $req->input('token');
