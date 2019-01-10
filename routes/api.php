@@ -25,6 +25,9 @@ Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
 Route::group(['prefix' => 'status/'],function(){
 Route::post('/compose','StatusController@composeStatusPost');
 Route::get('/getStatuses','StatusController@getStatuses');
+
+Route::get('/discoverStatuses','StatusController@discoverStatuses');
+
 Route::get('/getUserStatuses','StatusController@getUserStatuses');
 Route::get('/rateStatus','StatusController@rateStatus');
 Route::get('/deleteStatus','StatusController@deleteStatus');
@@ -109,7 +112,7 @@ Route::get('/check',function(){
 
 
 	$an['res'] = 'http:\/\/192.168.10.5\/swap\/public\/statuses\/videos\/Irfan Ullah31545909822';
-	$an['type'] = 1; 
+	$an['type'] = 1;
 	$and[] = $an;
 	echo json_encode($and);
 

@@ -21,13 +21,13 @@ class AttachmentController extends Controller
     		return response()->json([
     			'isError' => true,
     			'isEmpty' => true,
-    			'message' => 'Argument must be provided.' 
+    			'message' => 'Argument must be provided.'
     		]);
-                
+
     	}else {
 
     	// verifying user
-    	
+
     	$verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
         $status = $verify->BelongToUserOrNotStatusReturn($status_id,$user->user_id);
@@ -39,7 +39,7 @@ class AttachmentController extends Controller
     			'message' => 'Either your credentials are incorrect or you are not loggedin to perform this action.'
     		]);
         }
-        //else - if verified		
+        //else - if verified
         else {
 
         	//check - does the status belong to the user trying to upload attachments or not.
@@ -70,13 +70,13 @@ class AttachmentController extends Controller
                         $att = $status->attachments;
                         $json = json_decode($att);
                         $arr['attachment_url'] = asset("statuses/images/")."/".$file_name;
-                        $arr['attachment_type'] = 1; 
+                        $arr['attachment_type'] = 1;
                         $json[] = $arr;
                         $status->attachments = json_encode($json);
                      } else {
                         $status->has_attachment = 1;
                         $arr['attachment_url'] = asset("statuses/images/")."/".$file_name;
-                        $arr['attachment_type'] = 1; 
+                        $arr['attachment_type'] = 1;
                         $json[] = $arr;
                         $status->attachments = json_encode($json);
                      }
@@ -121,22 +121,23 @@ class AttachmentController extends Controller
     		//upload image
 			   	$file = $req->file('video');
                 $path = "./statuses/videos/";
-                $file_name = $user->name.$user->user_id.time();
+                $file_name = $user->username.$user->user_id.time().".mp4";
+               // $file_name = $user->name.$user->user_id.time();
 
                 if($file->move($path,$file_name)){
                 	//file uploaded; save the details to the db
-         
+
                      if($status->has_attachment == 1){
                         $att = $status->attachments;
                         $json = json_decode($att);
                         $arr['attachment_url'] = asset("statuses/videos/")."/".$file_name;
-                        $arr['attachment_type'] = 2; 
+                        $arr['attachment_type'] = 2;
                         $json[] = $arr;
                         $status->attachments = json_encode($json);
                      } else {
                         $status->has_attachment = 1;
                         $arr['attachment_url'] = asset("statuses/videos/")."/".$file_name;
-                        $arr['attachment_type'] = 2; 
+                        $arr['attachment_type'] = 2;
                         $json[] = $arr;
                         $status->attachments = json_encode($json);
                      }
@@ -185,6 +186,6 @@ class AttachmentController extends Controller
     }//verfied user else
 
     }// outer else - not null
-    
+
     }
 }

@@ -23,10 +23,10 @@ class Statuses extends Model
         ->groupby('statuses.user_id')
         ->groupby('statuses.created_at')
         ->orderBy('statuses.status_id','DESC');
-        return $statuses;    
-        
-        
-        
+        return $statuses;
+
+
+
 // "status_id": 7,
 // "user_id": 3,
 // "status": "hello how are you.",
@@ -59,7 +59,22 @@ class Statuses extends Model
         ->groupby('statuses.user_id')
         ->groupby('statuses.created_at')
         ->orderBy('statuses.status_id','DESC');
-        return $statuses;    
-        
+        return $statuses;
+
+    }
+
+    public function discoverStatuses($user_id){
+        return DB::table('statuses')->where('statuses.user_id','!=', $user_id)
+        ->leftjoin('users',['users.user_id' => 'statuses.user_id'])
+        ->leftjoin('rattings',['rattings.status_id' => 'statuses.status_id'])
+        ->select('profile_image','statuses.has_attachment','statuses.attachments','status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"))
+        ->groupby('profile_image')
+        ->groupby('status')
+        ->groupby('statuses.has_attachment')
+        ->groupby('statuses.attachments')
+        ->groupby('statuses.status_id')
+        ->groupby('statuses.user_id')
+        ->groupby('statuses.created_at')
+        ->orderBy('statuses.status_id','DESC');
     }
 }

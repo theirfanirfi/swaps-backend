@@ -115,7 +115,7 @@ class StatusController extends Controller
         }
     }
 
-    
+
 public function getStatuses(Request $req)
 {
         $token = $req->input('token');
@@ -147,7 +147,7 @@ public function getStatuses(Request $req)
                     'isAuthenticated' => true,
                     'isFound' => false,
                     'message' => 'You have not posted any status yet.'
-                ]); 
+                ]);
             }
 
         }
@@ -174,7 +174,7 @@ public function rateStatus(Request $req){
                 'message' => "Arguments required."
             ]);
         } else {
-            
+
           $rating = Rattings::where(['status_id' => $status_id,'ratted_by_user_id'=> $user->user_id]);
 
           if($rating->count() > 0){
@@ -304,7 +304,7 @@ public function deleteStatus(Request $req){
 public function getUserStatuses(Request $req)
 {
         $user_id = $req->input('id');
-      
+
             $statuses = new Statuses();
             $st =  $statuses->getUserStatuses($user_id);
             if($st->count() > 0){
@@ -321,7 +321,7 @@ public function getUserStatuses(Request $req)
                     'isAuthenticated' => true,
                     'isFound' => false,
                     'message' => 'The User has not posted any status yet.'
-                ]); 
+                ]);
             }
 
 }
@@ -353,7 +353,7 @@ public function getStatusAttachments(Request $req){
             'isAuthenticated' => true,
             'isError' => true,
             'message' => 'The status does not belong to you.'
-        ]); 
+        ]);
     }
     else {
         $attachments = Attachments::where(['status_id' => $status_id]);
@@ -389,6 +389,41 @@ $diff=date_diff($date1,$date2);
 echo $diff->format("%y - %m - %d %h %i %s");
 }
 
+public function discoverStatuses(Request $req)
+{
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
 
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else
+        {
+            $statuses = new Statuses();
+            $st =  $statuses->discoverStatuses($user->user_id);
+            if($st->count() > 0)
+            {
+                $st = $st->limit(50)->get();
+               return response()->json([
+                     'isAuthenticated' => true,
+                     'isFound' => true,
+                     'statuses' => $st,
+                     'message' => 'loading....'
+                ]);
+            }
+            else
+            {
+               return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                    'message' => 'You have not posted any status yet.'
+                ]);
+            }
+
+        }
+}
 
 }
