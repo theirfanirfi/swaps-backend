@@ -468,4 +468,47 @@ class FollowerController extends Controller
         $f = new Followers();
         echo $f->getUsersFor(3)->get();
     }
+
+    public function getUsersAtNacentRegisteration(Request $req){
+        $token = $req->input('token');
+
+        if($token == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isEmpty' => true,
+                'message' => "Arguments must be supplied."
+            ]);
+        }else {
+
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'You are not loggedin.'
+            ]);
+        }
+        else
+        {
+            $f = new Followers();
+            $users = $f->getUsersForAtStartUp($user->user_id);
+            if($users->count() > 0){
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isEmpty' => false,
+                    'isFound' => true,
+                    'users' => $users->get(),
+                    'message' => "loading.."
+                ]);
+            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isEmpty' => false,
+                    'isFound' => false,
+                    'message' => "No user found at the moment"
+                ]);
+            }
+        }
+    }
+    }
 }

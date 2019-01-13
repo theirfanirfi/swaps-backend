@@ -64,36 +64,34 @@ class StatusController extends Controller
     public function composeStatusPost(Request $req)
     {
         $token = $req->input('token');
-        $post = $req->input('status');
-        $verify = new VerifyToken();
-        $user = $verify->verifyTokenInDb($token);
+        $statuss = $req->input('status');
 
+        if($token == null || $statuss == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isEmpty' => true,
+                'message' => "Arguments must be supplied."
+            ]);
+        }else {
+
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
         if(!$user){
             return response()->json([
-                'isAuthenticated' => false
+                'isAuthenticated' => false,
+                'message' => 'You are not loggedin.'
             ]);
         }
         else
         {
-            if($post == "")
-            {
-                return response()->json([
-                    'isAuthenticated' => true,
-                    'isEmpty' => true,
-                    'message' => "Post cannot be empty."
-                ]);
-            }
-            else
-            {
                     $status = new Statuses();
                     $status->user_id = $user->user_id;
-                    $status->status = $post;
-                 date_default_timezone_set("Asia/Karachi");
+                    $status->status = $statuss;
+                    date_default_timezone_set("Asia/Karachi");
                     $status->posting_time = time();
 
 
-                    if($status->save())
-                    {
+                    if($status->save()){
                         return response()->json([
                             'isAuthenticated' => true,
                             'isEmpty' => false,
@@ -102,8 +100,7 @@ class StatusController extends Controller
                             'message' => "Status Posted."
                         ]);
                     }
-                    else
-                    {
+                    else {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isEmpty' => false,
@@ -113,6 +110,8 @@ class StatusController extends Controller
                     }
             }
         }
+
+
     }
 
 

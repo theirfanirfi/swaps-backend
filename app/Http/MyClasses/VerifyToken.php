@@ -7,10 +7,10 @@ class VerifyToken {
 
     public function verifyTokenInDb($token)
     {
-        $user = User::where(['token' => $token])->get();
+        $user = User::where(['token' => $token]);
         if($user->count() > 0)
         {
-            return $user->first();
+            return $user->get()->first();
         }
         else
         {

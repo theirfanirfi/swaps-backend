@@ -39,9 +39,11 @@ class Followers extends Model
         return $one->union($two);
     }
 
-    public function getUsersFor($user_id){
+    public function getUsersForAtStartUp($user_id){
         $users = DB::table('users')
-        ->leftjoin('followers','followers.follower_user_id','!=',$user_id);
+        ->where('users.user_id','!=',$user_id);
         return $users;
     }
+
+
 }

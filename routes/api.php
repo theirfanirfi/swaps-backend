@@ -22,8 +22,8 @@ Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
 
 });
 
-Route::group(['prefix' => 'status/'],function(){
-Route::post('/compose','StatusController@composeStatusPost');
+Route::group(['prefix' => 'status'],function(){
+Route::post('compose','StatusController@composeStatusPost');
 Route::get('/getStatuses','StatusController@getStatuses');
 
 Route::get('/discoverStatuses','StatusController@discoverStatuses');
