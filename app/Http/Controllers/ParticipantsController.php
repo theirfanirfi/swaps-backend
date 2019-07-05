@@ -55,4 +55,34 @@ class ParticipantsController extends Controller
         }
 
     }
+
+
+
+    public function getUnReadMessageAndCount(Request $req){
+
+        $token = $req->input('token');
+$verify = new VerifyToken();
+$user = $verify->verifyTokenInDb($token);
+
+if(!$user){
+    return response()->json([
+        'isAuthenticated' => false,
+        'message' => 'Not authenticated'
+    ]);
+}
+else
+{
+     
+if($token == ""){
+    return response()->json([
+        'isEmpty' => true,
+        'isError' => true,
+        'isAuthenticated' => false,
+        'message' => 'Arugments must be provided.'
+    ]);
+}else {
+    
+}
+}
+    }
 }

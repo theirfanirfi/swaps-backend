@@ -43,10 +43,13 @@ class MessageController extends Controller
         {
         //here the sending goes.
         	$msg = new Messages();
-                 date_default_timezone_set("Asia/Karachi");
+                // date_default_timezone_set("Asia/Karachi");
+                $timezone = date_default_timezone_get();
+                date_default_timezone_set($timezone);
         	$msg->sender_id = $user->user_id;
         	$msg->reciever_id = $TO_CHAT_WITH;
-        	$msg->message = $message;
+            $msg->message = $message;
+
         	//check if the participants table has entry for the chat or not.
         	//has the user chatted before?
 
@@ -134,5 +137,49 @@ class MessageController extends Controller
                 'response_message' => 'Arguments must be provided.'
             ]);
     }
-	}
+    }
+    
+
+
+    public function getUnReadMessageAndCount(Request $req){
+
+        $token = $req->input('token');
+$verify = new VerifyToken();
+$user = $verify->verifyTokenInDb($token);
+$chat_id = $req->input('chat_id');
+
+if(!$user){
+    return response()->json([
+        'isAuthenticated' => false,
+        'message' => 'Not authenticated'
+    ]);
+}
+else
+{
+     
+if($token == "" || $chat_id == ""){
+    return response()->json([
+        'isEmpty' => true,
+        'isError' => true,
+        'isAuthenticated' => false,
+        'message' => 'Arugments must be provided.'
+    ]);
+}else {
+    $m = new Messages();
+
+    $last_message = $m->getLastMessage($chat_id);
+    $count = $m->getUnReadMessagesCount($chat_id,$user->user_id);
+
+    return response()->json([
+        'isEmpty' => false,
+        'isError' => false,
+        'isAuthenticated' => true,
+        'last_message_count' => $last_message->count(),
+        'last_message' => $last_message->get()->last(),
+        'count_unread_messages' => $count,
+        'message' => 'loading'
+    ]);
+}
+}
+    }
 }

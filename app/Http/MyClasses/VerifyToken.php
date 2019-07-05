@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\MyClasses;
 use App\User;
@@ -10,7 +10,7 @@ class VerifyToken {
         $user = User::where(['token' => $token]);
         if($user->count() > 0)
         {
-            return $user->get()->first();
+            return $user->first();
         }
         else
         {

@@ -65,8 +65,8 @@ class SwapsController extends Controller
             if($token == null || $swap_id == null){
                 return response()->json([
                     'isAuthenticated' => true,
-                    'isError' => true, 
-                    'isEmpty' => true, 
+                    'isError' => true,
+                    'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
             }else {
@@ -81,7 +81,7 @@ class SwapsController extends Controller
                     'message' => 'Swap found.'
 
                 ]);
-            
+
             }else {
                 return response()->json([
                     'isAuthenticated' => true,
@@ -110,8 +110,8 @@ class SwapsController extends Controller
             if($token == null || $swap_id == null){
                 return response()->json([
                     'isAuthenticated' => true,
-                    'isError' => true, 
-                    'isEmpty' => true, 
+                    'isError' => true,
+                    'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
             }else {
@@ -122,32 +122,32 @@ class SwapsController extends Controller
 
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => false, 
+                            'isError' => false,
                             'isEmpty' => false,
-                            'isFound' => true, 
-                            'isDeSwap' => true, 
+                            'isFound' => true,
+                            'isDeSwap' => true,
                             'message' => 'Status unswaped.'
                         ]);
 
                     } else {
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => false, 
+                            'isError' => false,
                             'isEmpty' => false,
-                            'isFound' => true, 
-                            'isDeSwap' => false, 
+                            'isFound' => true,
+                            'isDeSwap' => false,
                             'message' => 'Error occurred in unswaping the status.'
                         ]);
-                        
+
                     }
 
                 } else {
                     return response()->json([
                         'isAuthenticated' => true,
-                        'isError' => false, 
+                        'isError' => false,
                         'isEmpty' => false,
-                        'isFound' => false, 
-                        'isDeSwap' => false, 
+                        'isFound' => false,
+                        'isDeSwap' => false,
                         'message' => 'Swap not found.'
                     ]);
                 }

@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 // });
 
 Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
-    Route::get('/','UserController@getUser');
+	Route::get('/','UserController@getUser');
 
 });
 
@@ -44,7 +44,11 @@ Route::get('/isfollow','FollowerController@isfollow');
 Route::get('/follow','FollowerController@follow');
 Route::get('/unfollow','FollowerController@unfollow');
 Route::get('/users','FollowerController@getUsers');
+Route::get('/startFollowing','FollowerController@getUsersAtNacentRegisteration');
 Route::get('/check','FollowerController@getF');
+Route::get('/followed','FollowerController@followed');
+Route::get('/invites', 'UserController@updateInvitesCount');
+Route::get('/getUserFollowers','FollowerController@getUserFollowers');
 
 });
 
@@ -55,31 +59,35 @@ Route::get('/unswap','SwapsController@unswap');
 Route::get('/getSwap','SwapsController@getSwap');
 });
 
-Route::group(['prefix' => 'auth/'],function(){
+Route::group(['prefix' => 'auth'],function(){
+	Route::get('/', 'LoginController@checktoken');
 Route::get('/login/{data}','LoginController@login')->name('login');
-Route::get('/register/{data}','LoginController@register');
+Route::get('register/{data}','LoginController@register');
+Route::post('slogin','LoginController@slogin')->name('slogin');
 });
 
 Route::group(['prefix' => 'rating'],function(){
 Route::get('/getStatusRatings','RatingController@getStatusRatings');
+Route::get('/getStatusRaters','RatingController@getStatusRaters');
 });
 
 
 Route::group(['prefix' => 'profile'],function(){
-
 Route::post('/updateImage','ProfileController@updateImage');
 Route::get('/updateDescription','ProfileController@updateDescription');
 Route::get('/getProfileStats','ProfileController@getProfileStats');
 Route::get('/getProfileUserStats','ProfileController@getProfileUserStats');
 Route::get('/updateProfileDetails','ProfileController@updateProfileDetails');
 Route::get('/changePassword','ProfileController@changePassword');
-
 });
 
 Route::group(['prefix' => 'notifications'],function(){
 Route::get('/getNotifications','NotificationController@getNotifications');
+Route::get('/getSwapRequestNotifications','NotificationController@getSwapRequestNotifications');
 Route::get('/getNotificationsCount','NotificationController@getNotificationsCount');
+Route::get('/getSwapNotificationsCount','NotificationController@getSwapNotificationsCount');
 Route::get('/approveSwap','NotificationController@approveSwap');
+Route::get('/declineSwap','NotificationController@declineSwap');
 Route::get('/clear','NotificationController@clear');
 });
 
@@ -91,6 +99,7 @@ Route::group(['prefix' => 'msg'],function(){
 
 Route::get('/','MessageController@getMessages');
 Route::get('/send','MessageController@sendMessage');
+Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 
 });
 
@@ -99,6 +108,25 @@ Route::get('/send','MessageController@sendMessage');
 Route::group(['prefix' => 'attachments'],function(){
 Route::post('send','AttachmentController@send');
 });
+
+//search
+
+Route::group(['prefix' => 'search'],function(){
+Route::get('/status', 'SearchController@searchStatuses');
+Route::get('/users', 'SearchController@searchUsers');
+});
+
+
+
+
+//Like and dislike
+
+Route::post('like','LikeController@like');
+Route::post('share','ShareController@share');
+
+//comment
+Route::post('comment','CommentController@comment');
+Route::post('comments','CommentController@getComments');
 
 //Route::get('/check','StatusController@check');
 

@@ -10,7 +10,7 @@ use App\Models\Rattings;
 use App\Models\Swaps;
 use App\Models\Attachments;
 use App\Http\MyClasses\VerifyToken;
-
+use App\User;
 class StatusController extends Controller
 {
     //
@@ -18,7 +18,7 @@ class StatusController extends Controller
     public function getStatus(Request $req){
         $token = $req->input('token');
         $status_id = $req->input('status_id');
-
+        //echo $token;
         if($token == null || $status_id == null){
             return response()->json([
                 'isAuthenticated' => false,
@@ -145,7 +145,7 @@ public function getStatuses(Request $req)
                return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
-                    'message' => 'You have not posted any status yet.'
+                    'message' => 'You have not posted any status yet. '.$user->user_id
                 ]);
             }
 

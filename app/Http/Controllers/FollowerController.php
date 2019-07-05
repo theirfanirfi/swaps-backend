@@ -316,7 +316,9 @@ class FollowerController extends Controller
                 $f = new Followers();
                 $f->followed_user_id = $to_be_followed;
                 $f->follower_user_id = $user->user_id;
-
+                $user->is_followed = 1;
+                $user->followed = $user->followed + 1;
+                $user->save();
                 if($f->save()){
             return response()->json([
                 'isAuthenticated' => true,
@@ -471,7 +473,6 @@ class FollowerController extends Controller
 
     public function getUsersAtNacentRegisteration(Request $req){
         $token = $req->input('token');
-
         if($token == null){
             return response()->json([
                 'isAuthenticated' => false,
@@ -506,6 +507,95 @@ class FollowerController extends Controller
                     'isEmpty' => false,
                     'isFound' => false,
                     'message' => "No user found at the moment"
+                ]);
+            }
+        }
+    }
+    }
+
+
+    public function followed(Request $req){
+        $token = $req->input('token');
+        $followed_count = $req->input('followed_count');
+        if($token == null || $followed_count == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'message' => "Arguments must be supplied."
+            ]);
+        }else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'message' => 'You are not loggedin.'
+            ]);
+        }
+        else{
+            $user->is_followed = 1;
+            $user->followed = $followed_count;
+            if($user->save()){
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isError' => false,
+                    'isUpdated' => true,
+                    'message' => "Updated"
+                ]);
+            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isError' => true,
+                    'message' => "Error occurred in updating your record. Please try again."
+                ]);
+            }
+        }
+    }
+    }
+
+
+    public function getUserFollowers(Request $req){
+        $token = $req->input('token');
+        $profile_id = $req->input('profile_id');
+        if($token == null || $profile_id == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'isEmpty' => true,
+                'message' => "Arguments must be supplied."
+            ]);
+        }else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'isEmpty' => false,
+                'message' => 'You are not loggedin.'
+            ]);
+        }
+        else{
+            $f = new Followers();
+            $followers = $f->getUserFollowers($user->user_id,$profile_id);
+            if($followers->count() > 0){
+                return response()->json([
+                    'isFound' => true,
+                    'isAuthenticated' => true,
+                    'isError' => false,
+                'isEmpty' => false,
+                    'users' => $followers->get(),
+                    'message' => 'Loading...'
+
+                ]);
+            }else {
+                return response()->json([
+                    'isFound' => false,
+                    'isAuthenticated' => true,
+                    'isError' => false,
+                    'message' => 'User has no followers.',
+                'isEmpty' => false
                 ]);
             }
         }

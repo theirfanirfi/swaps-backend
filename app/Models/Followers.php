@@ -45,5 +45,20 @@ class Followers extends Model
         return $users;
     }
 
+    public function getUserFollowers($user_id,$profile_id){
+        $followers = Followers::where(['followed_user_id' => $profile_id])
+        ->leftjoin('users',['users.user_id' => 'followers.follower_user_id'])
+        ->select('user_id','f_id','name','profile_image');
+    //    ;
+    //     $have = DB::table('followers')
+    //     ->joinSub($followers,'fone',function($join) use($profile_id, $user_id) {
+    //         $join->on(['fone.followed_user_id' => $profile_id, 'followers.follower_user_id' => $user_id]);
+    //     })
+        
+    //    ;
+
+        return $followers;
+    }
+
 
 }

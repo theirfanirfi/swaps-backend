@@ -120,7 +120,7 @@ class AttachmentController extends Controller
     		    		if($req->hasFile('video')){
     		//upload image
 			   	$file = $req->file('video');
-                $path = "./statuses/videos/";
+                $path = "./videos/";
                 $file_name = $user->username.$user->user_id.time().".mp4";
                // $file_name = $user->name.$user->user_id.time();
 

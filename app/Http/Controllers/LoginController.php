@@ -14,7 +14,7 @@ class LoginController extends Controller
     {
         $arr = base64_decode($data);
         $arr = json_decode($arr);
-        
+
         $email = $arr[0];
         $password = $arr[1];
 
@@ -24,6 +24,7 @@ class LoginController extends Controller
                 'isError' => true,
                 'isUser' => false,
                 'user' => false,
+                'tokenError' => false,
                 'message' => 'None of the field can be empty'
             ]);
         }
@@ -31,10 +32,10 @@ class LoginController extends Controller
         {
             if(Auth::attempt(['email'=>$email, 'password' => $password]))
             {
-               
+
                 $user = User::where(['email' => $email])->first();
                 $token = Hash::make(base64_encode($user->name.":".time()));
-                $user->token = $token;
+                $user->token = base64_encode($token);
                 if($user->save()){
                 return response()->json([
                     'isError' => false,
@@ -62,6 +63,7 @@ class LoginController extends Controller
                 'isError' => true,
                 'isUser' => false,
                 'user' => false,
+                'tokenError' => false,
                 'message' => 'Entered User credentials are incorrect.'
                 ]);
             }
@@ -97,7 +99,7 @@ class LoginController extends Controller
                 'isUser' => false,
                 'isUserNameTaken' => false,
                 'isUsernameLengthError' => false,
-                'message' => 'None of the field can be empty '.$password
+                'message' => 'None of the field can be empty '
             ]);
         }
         else if(strlen($password) < 6)
@@ -170,7 +172,12 @@ class LoginController extends Controller
             $user->username = $username;
             $user->password = Hash::make($password);
             $token = Hash::make(base64_encode($name.":".time()));
-            $user->token = $token;
+            $user->token = base64_encode($token);
+            $user->is_followed = 0;
+            $user->followed = 0;
+            $user->is_invited = 0;
+            $user->invites = 0;
+            $user->is_soc = 0;
 
             if($user->save())
             {
@@ -206,5 +213,146 @@ class LoginController extends Controller
 
 
         }
+    }
+
+    public function slogin(Request $req){
+        $id = $req->input('id');
+        $name = $req->input('name');
+        $network = $req->input('net');
+        $profile_image = $req->input('profile_image');
+
+        if($id == "" || $name == "" || $network == "" || $profile_image == ""){
+            return response()->json([
+                'isError' => true,
+                'isFieldEmpty' => true,
+                'isPasswordError' => false,
+                'isEmailTaken'=> false,
+                'isUserRegistered' => false,
+                'user' => false,
+                'isUser' => false,
+                'isUserNameTaken' => false,
+                'isUsernameLengthError' => false,
+                'message' => 'None of the field can be empty '
+            ]);
+        }else {
+
+            $user = User::where(['slogin_id' => $id, 'email' => $id,'slogin_title' => $network]);
+
+            if($user->count() > 0){
+                if(Auth::attempt(['email' => $id, 'password' => $id])){
+                    return response()->json([
+                        'isError' => false,
+                        'isUserRegistered' => true,
+                        'user' => $user->first(),
+                        'isFieldEmpty' => false,
+                        'isPasswordError' => false,
+                        'isEmailTaken'=> false,
+                        'isUser' => true,
+                        'isUserNameTaken' => false,
+                        'isUsernameLengthError' => false,
+                        'message' => 'Login was successful.'
+                    ]);
+                }else {
+                    $newUser = new User();
+
+                    $newUser->name = $name;
+                    $newUser->email = $id;
+                    $newUser->username = $name;
+                    $newUser->profile_image = $profile_image;
+                    $newUser->password = Hash::make($id);
+                    $token = Hash::make(base64_encode($id.":".time()));
+                    $newUser->token = base64_encode($token);
+                    $newUser->is_followed = 0;
+                    $newUser->followed = 0;
+                    $newUser->is_invited = 0;
+                    $newUser->invites = 0;
+                    $newUser->is_soc = 0;
+                    $newUser->is_slogin = 1;
+                    $newUser->slogin_title = $network;
+                    $newUser->slogin_id = $id;
+
+                    if($newUser->save()){
+                        return response()->json([
+                            'isError' => false,
+                            'isUserRegistered' => true,
+                            'user' => $newUser,
+                            'isFieldEmpty' => false,
+                            'isPasswordError' => false,
+                            'isEmailTaken'=> false,
+                            'isUser' => true,
+                            'isUserNameTaken' => false,
+                            'isUsernameLengthError' => false,
+                            'message' => 'Registeration was successful.'
+                        ]);
+                    }else {
+                        return response()->json([
+                            'isError' => true,
+                            'isFieldEmpty' => false,
+                            'isPasswordError' => false,
+                            'isEmailTaken'=> false,
+                            'isUserRegistered' => false,
+                            'user' => false,
+                            'isUser' => false,
+                            'isUserNameTaken' => false,
+                            'isUsernameLengthError' => false,
+                            'message' => 'Registeration was unsuccessful. Please try again.'
+                        ]);
+                    }
+                }
+            }else {
+                $newUser = new User();
+
+                $newUser->name = $name;
+                $newUser->email = $id;
+                $newUser->username = $name;
+                $newUser->password = Hash::make($id);
+                $newUser->profile_image = $profile_image;
+                $token = Hash::make(base64_encode($id.":".time()));
+                $newUser->token = base64_encode($token);
+                $newUser->is_followed = 0;
+                $newUser->followed = 0;
+                $newUser->is_invited = 0;
+                $newUser->invites = 0;
+                $newUser->is_soc = 0;
+                $newUser->is_slogin = 1;
+                $newUser->slogin_title = $network;
+                $newUser->slogin_id = $id;
+
+                if($newUser->save()){
+                    return response()->json([
+                        'isError' => false,
+                        'isUserRegistered' => true,
+                        'user' => $newUser,
+                        'isFieldEmpty' => false,
+                        'isPasswordError' => false,
+                        'isEmailTaken'=> false,
+                        'isUser' => true,
+                        'isUserNameTaken' => false,
+                        'isUsernameLengthError' => false,
+                        'message' => 'Registeration was successful.'
+                    ]);
+                }else {
+                    return response()->json([
+                        'isError' => true,
+                        'isFieldEmpty' => false,
+                        'isPasswordError' => false,
+                        'isEmailTaken'=> false,
+                        'isUserRegistered' => false,
+                        'user' => false,
+                        'isUser' => false,
+                        'isUserNameTaken' => false,
+                        'isUsernameLengthError' => false,
+                        'message' => 'Registeration was unsuccessful. Please try again.'
+                    ]);
+                }
+
+            }
+        }
+
+    }
+
+    public function checktoken(Request $req){
+        $user = User::where(['token' => $req->input('token')]);
+        echo $user->count();
     }
 }

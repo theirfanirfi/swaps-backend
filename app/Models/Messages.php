@@ -26,5 +26,15 @@ class Messages extends Model
     	}else {
     		return false;
     	}
+	}
+	
+	public function getLastMessage($chat_id){
+        $chats = Messages::where(['chat_id' => $chat_id]);
+        return $chats;
+    }
+
+    public function getUnReadMessagesCount($chat_id,$user_id){
+        $chats = Messages::where(['chat_id' => $chat_id, 'reciever_id' => $user_id ,'isRead' => '0'])->count();
+        return $chats;
     }
 }
