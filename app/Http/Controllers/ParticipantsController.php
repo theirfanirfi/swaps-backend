@@ -32,9 +32,10 @@ class ParticipantsController extends Controller
             ]);
             }else {
             	$p = new Participants();
-				$p = $p->getParticipants($user->user_id);
-				if($p->count() > 0){
-					$p = $p->get();
+				//$p = $p->getParticipants($user->user_id);
+                $p = $p->getParticipantsAndGroups($user->user_id);
+				if(sizeof($p) > 0){
+					//$p = $p->get();
 					return response()->json([
 					'participants' => $p,
 					'isAuthenticated' => true,

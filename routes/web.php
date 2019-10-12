@@ -11,6 +11,11 @@
 |
 */
 
+use App\Models\Participants;
+
 Route::get('/', function () {
-    return view('welcome');
+    //return view('welcome');
+
+    $p = new Participants();
+    dd($p->getParticipantsAndGroups(8));
 });
