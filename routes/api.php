@@ -101,6 +101,9 @@ Route::get('/','MessageController@getMessages');
 Route::get('/send','MessageController@sendMessage');
 Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 
+//group messages
+Route::get('/gc','GroupMessagesController@getGroupMessages');
+
 });
 
 //upload status attachments
