@@ -103,6 +103,7 @@ Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 
 //group messages
 Route::get('/gc','GroupMessagesController@getGroupMessages');
+Route::get('/gs','GroupMessagesController@sentMessageToGroup');
 
 });
 
@@ -119,6 +120,13 @@ Route::get('/status', 'SearchController@searchStatuses');
 Route::get('/users', 'SearchController@searchUsers');
 });
 
+
+//groups
+
+Route::group(['prefix' => 'group'],function(){
+    Route::get('/create', 'GroupsController@createGroup');
+    Route::get('/users', 'SearchController@searchUsers');
+    });
 
 
 
