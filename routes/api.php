@@ -104,6 +104,8 @@ Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 //group messages
 Route::get('/gc','GroupMessagesController@getGroupMessages');
 Route::get('/gs','GroupMessagesController@sentMessageToGroup');
+//forward
+Route::get('/fr','GroupMessagesController@forwardMessageFromGroup');
 
 });
 
