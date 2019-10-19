@@ -6,7 +6,7 @@ use App\Models\Groups;
 use App\Models\Participants;
 use Illuminate\Http\Request;
 use App\Http\MyClasses\VerifyToken;
-
+use App\User;
 
 class GroupsController extends Controller
 {
@@ -81,6 +81,74 @@ class GroupsController extends Controller
     			'message' => 'Error occurred in creating the group. Please try again.'
     		]);
             }
+        }
+    }
+    }
+
+
+    public function inviteToGroup(Request $req){
+        $token = $req->input('token');
+        $group_id = $req->input('gd');
+        $user_id = $req->input('ud');
+
+    	if($token == null || $group_id == null || $user_id == null){
+
+    		return response()->json([
+    			'isError' => true,
+    			'isEmpty' => true,
+    			'message' => 'Argument must be provided.'
+    		]);
+
+    	}else {
+
+    	// verifying user
+
+    	$verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        //if not verified
+        if(!$user){
+        	    return response()->json([
+    			'isError' => true,
+    			'isAuthenticated' => false,
+    			'message' => 'Either your credentials are incorrect or you are not loggedin to perform this action.'
+    		]);
+        }
+        //else - if verified
+        else {
+            $group = Groups::where(['group_id' => $group_id]);
+            if($group->count() > 0){
+                $group = $group->first();
+                $userToInvite = User::where(['user_id' => $user_id]);
+                if($group->count() > 0){
+                    $userToInvite = $userToInvite->first();
+
+                    $par = new Participants();
+                    $par->user_one = $userToInvite->user_id;
+                    $par->user_two = $userToInvite->user_id;
+                    $par->is_group = 1;
+                    $par->group_id = $group->id;
+
+                    if($par->save()){
+                        return response()->json([
+                            'isError' => false,
+                            'isAuthenticated' => true,
+                            'isEmpty' => false,
+                            'isCreated' => true,
+                            'group' => $group,
+                            'message' => 'User invited to the group'
+                        ]);
+                    }else {
+                        return response()->json([
+                            'isError' => true,
+                            'isAuthenticated' => true,
+                            'isEmpty' => false,
+                            'message' => 'Error occurred in creating the group. Please try again.'
+                        ]);
+                    }
+                }
+            }
+
+
         }
     }
     }
