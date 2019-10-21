@@ -47,10 +47,15 @@ class User extends Authenticatable
         $join->on('fali.user_id','=','followers.followed_user_id')
         ->where(['follower_user_id' => $user_id])
         ;
-    })       
+    })
     ->select('f_id','fali.user_id','name','username','profile_image')
     ;
 
         return $followers;
+    }
+
+    public static function getUserForTaging($user_id){
+        return User::where(['user_id' => $user_id])
+        ->select('user_id','name','profile_image');
     }
 }

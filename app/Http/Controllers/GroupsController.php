@@ -96,7 +96,7 @@ class GroupsController extends Controller
     		return response()->json([
     			'isError' => true,
     			'isEmpty' => true,
-    			'message' => 'Argument must be provided.'
+    			'response_message' => 'Argument must be provided.'
     		]);
 
     	}else {
@@ -110,16 +110,16 @@ class GroupsController extends Controller
         	    return response()->json([
     			'isError' => true,
     			'isAuthenticated' => false,
-    			'message' => 'Either your credentials are incorrect or you are not loggedin to perform this action.'
+    			'response_message' => 'Either your credentials are incorrect or you are not loggedin to perform this action.'
     		]);
         }
         //else - if verified
         else {
-            $group = Groups::where(['group_id' => $group_id]);
+            $group = Groups::where(['id' => $group_id]);
             if($group->count() > 0){
                 $group = $group->first();
                 $userToInvite = User::where(['user_id' => $user_id]);
-                if($group->count() > 0){
+                if($userToInvite->count() > 0){
                     $userToInvite = $userToInvite->first();
 
                     $par = new Participants();
@@ -133,18 +133,24 @@ class GroupsController extends Controller
                             'isError' => false,
                             'isAuthenticated' => true,
                             'isEmpty' => false,
-                            'isCreated' => true,
-                            'group' => $group,
-                            'message' => 'User invited to the group'
+                            'isInvited' => true,
+                            'response_message' => 'User invited to the group'
                         ]);
                     }else {
                         return response()->json([
                             'isError' => true,
                             'isAuthenticated' => true,
                             'isEmpty' => false,
-                            'message' => 'Error occurred in creating the group. Please try again.'
+                            'response_message' => 'Error occurred in creating the group. Please try again.'
                         ]);
                     }
+                }else {
+                    return response()->json([
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isEmpty' => false,
+                        'response_message' => 'No, such user found to invite.'
+                    ]);
                 }
             }
 

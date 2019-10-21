@@ -106,6 +106,8 @@ Route::get('/gc','GroupMessagesController@getGroupMessages');
 Route::get('/gs','GroupMessagesController@sentMessageToGroup');
 //forward
 Route::get('/fr','GroupMessagesController@forwardMessageFromGroup');
+//invite to group
+Route::get('/inv','GroupsController@inviteToGroup');
 
 });
 
@@ -140,6 +142,14 @@ Route::post('share','ShareController@share');
 //comment
 Route::post('comment','CommentController@comment');
 Route::post('comments','CommentController@getComments');
+
+
+//tag users
+Route::group(['prefix' => 'tag'], function () {
+Route::get('getusertotag','TagUserController@getUserForTaging');
+
+});
+
 
 //Route::get('/check','StatusController@check');
 
