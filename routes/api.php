@@ -147,6 +147,7 @@ Route::post('comments','CommentController@getComments');
 //tag users
 Route::group(['prefix' => 'tag'], function () {
 Route::get('getusertotag','TagUserController@getUserForTaging');
+Route::get('user','TagUserController@getUser');
 
 });
 
