@@ -132,9 +132,9 @@ public function getStatuses(Request $req)
         {
             $statuses = new Statuses();
             $st =  $statuses->getStatuses($user->user_id);
-            if($st->count() > 0)
+            if(sizeof($st) > 0)
             {
-                $st = $st->get();
+                //$st = $st->get();
                return response()->json([
                      'isAuthenticated' => true,
                      'isFound' => true,
