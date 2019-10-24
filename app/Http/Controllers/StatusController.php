@@ -11,6 +11,8 @@ use App\Models\Swaps;
 use App\Models\Attachments;
 use App\Http\MyClasses\VerifyToken;
 use App\User;
+use App\UsersTaggedInStatus;
+
 class StatusController extends Controller
 {
     //
@@ -423,6 +425,79 @@ public function discoverStatuses(Request $req)
             }
 
         }
+}
+
+
+/////////// tag
+
+public function composeStatusTagPost(Request $req)
+{
+    $token = $req->input('token');
+    $statuss = $req->input('status');
+    $tags = $req->input('tags');
+    $tags = json_decode($tags);
+
+
+    if($token == null || $statuss == null){
+        return response()->json([
+            'isAuthenticated' => false,
+            'isEmpty' => true,
+            'message' => "Arguments must be supplied."
+        ]);
+    }else {
+
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+    if(!$user){
+        return response()->json([
+            'isAuthenticated' => false,
+            'message' => 'You are not loggedin.'
+        ]);
+    }
+    else
+    {
+                $status = new Statuses();
+                $status->user_id = $user->user_id;
+                $status->status = $statuss;
+                date_default_timezone_set("Asia/Karachi");
+                $status->posting_time = time();
+
+
+                if($status->save()){
+
+
+                    if(sizeof($tags) > 0){
+
+                        foreach($tags as $a){
+                            $t = new UsersTaggedInStatus();
+                            $t->status_id = $status->status_id;
+                            $t->tagged_user_id = $a;
+                            $t->save();
+                        }
+
+                    }
+
+
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isEmpty' => false,
+                        'isPosted' => true,
+                        'obj_status' => $status,
+                        'message' => "Status Posted."
+                    ]);
+                }
+                else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isEmpty' => false,
+                        'isPosted' => false,
+                        'message' => "Error occurred in posting the status, try again."
+                    ]);
+                }
+        }
+    }
+
+
 }
 
 }
