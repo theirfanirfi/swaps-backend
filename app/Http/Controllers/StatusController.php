@@ -461,6 +461,7 @@ public function composeStatusTagPost(Request $req)
                 $status->status = $statuss;
                 date_default_timezone_set("Asia/Karachi");
                 $status->posting_time = time();
+                $status->is_users_tagged = 1;
 
 
                 if($status->save()){
