@@ -18,4 +18,19 @@ class Comment extends Model
         ->leftjoin('users',['users.user_id' => 'status_comments.user_id' ])
         ->select('status_comments.id','comment','status_comments.created_at','users.name','status_comments.user_id','profile_image');
     }
+
+    public static function commentOnStatus($status_id,$user_id,$comment){
+        DB::beginTransaction();
+
+        try{
+
+            DB::insert('insert into status_comments (status_id, user_id,comment) values (?, ?,?)', [$status_id, $user_id,$comment]);
+            DB::insert('insert into notifications (isComment,isAction,status_id,action_by) values (?,?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::commit();
+            return true;
+        }catch(Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
 }

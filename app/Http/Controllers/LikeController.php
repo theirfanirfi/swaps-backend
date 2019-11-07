@@ -70,9 +70,11 @@ class LikeController extends Controller
                 }
             }else {
                 //like it
-                $like->status_id = $status_id;
-                $like->user_id = $user->user_id;
-                if($like->save()){
+                // $like->status_id = $status_id;
+                // $like->user_id = $user->user_id;
+
+                $isLiked = Like::likeStatus($user->user_id,$status_id);
+                if($isLiked){
 
                     //success
 

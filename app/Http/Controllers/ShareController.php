@@ -51,10 +51,12 @@ class ShareController extends Controller
                         'message' => 'You have already shared the status.'
                     ]);
             }else {
-                //like it
-                $share->status_id = $status_id;
-                $share->user_id = $user->user_id;
-                if($share->save()){
+                //share it
+                // $share->status_id = $status_id;
+                // $share->user_id = $user->user_id;
+
+                $isShared = Share::shareStatus($user->user_id,$status_id);
+                if($isShared){
 
                     //success
 

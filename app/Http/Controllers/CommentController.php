@@ -39,9 +39,8 @@ class CommentController extends Controller
         }
         //else - if verified
         else {
-
-            //check whether the status was already liked or not.
             $comment = new Comment();
+
             $check = $comment->checkComment($user->user_id, $commentt,$status_id);
             if($check > 0){
                 //already commented with the same text on the same status by the same user.
@@ -57,10 +56,13 @@ class CommentController extends Controller
 
             }else {
                 //like it
-                $comment->status_id = $status_id;
-                $comment->user_id = $user->user_id;
-                $comment->comment = $commentt;
-                if($comment->save()){
+                // $comment->status_id = $status_id;
+                // $comment->user_id = $user->user_id;
+                // $comment->comment = $commentt;
+
+                $isCommented = Comment::commentOnStatus($status_id,$user->user_id,$commentt);
+
+                if($isCommented){
 
                     //success
 

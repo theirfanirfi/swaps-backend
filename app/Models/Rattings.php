@@ -53,5 +53,18 @@ class Rattings extends Model
 
     }
 
-    //public function getSwap()
+    public static function rateStatus($status_id,$user_id,$rating){
+        DB::beginTransaction();
+        try{
+
+            DB::insert('insert into rattings (ratted_by_user_id,status_id,ratting) values (?, ?,?)', [$user_id,$status_id,$rating]);
+            DB::insert('insert into notifications (isRatting,isAction,status_id,action_by) values (?,?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::commit();
+            return true;
+
+        }catch(Exception $e){
+            DB::rollback();
+            return false;
+        }
+    }
 }

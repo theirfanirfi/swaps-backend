@@ -204,12 +204,14 @@ public function rateStatus(Request $req){
 
           } else {
 
-                $rating = new Rattings();
-                $rating->ratted_by_user_id = $user->user_id;
-                $rating->status_id = $status_id;
-                $rating->ratting = $ratingV;
+                // $rating = new Rattings();
 
-                if($rating->save()){
+                // $rating->ratted_by_user_id = $user->user_id;
+                // $rating->status_id = $status_id;
+                // $rating->ratting = $ratingV;
+                $isRated = Rattings::rateStatus($status_id,$user->user_id,$ratingV);
+
+                if($isRated){
                     return response()->json([
                         'isAuthenticated' => true,
                         'isEmpty' => false,
@@ -470,10 +472,12 @@ public function composeStatusTagPost(Request $req)
                     if(sizeof($tags) > 0){
 
                         foreach($tags as $a){
-                            $t = new UsersTaggedInStatus();
-                            $t->status_id = $status->status_id;
-                            $t->tagged_user_id = $a;
-                            $t->save();
+                            // $t = new UsersTaggedInStatus();
+                            // $t->status_id = $status->status_id;
+                            // $t->tagged_user_id = $a;
+                            // $t->save();
+
+                            $isTagged = UsersTaggedInStatus::tagUserInStatus($user->user_id,$status->status_id);
                         }
 
                     }
