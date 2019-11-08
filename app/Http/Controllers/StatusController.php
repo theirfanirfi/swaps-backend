@@ -209,25 +209,39 @@ public function rateStatus(Request $req){
                 // $rating->ratted_by_user_id = $user->user_id;
                 // $rating->status_id = $status_id;
                 // $rating->ratting = $ratingV;
-                $isRated = Rattings::rateStatus($status_id,$user->user_id,$ratingV);
+                $status = Statuses::where(['status_id' => $status_id]);
 
-                if($isRated){
-                    return response()->json([
-                        'isAuthenticated' => true,
-                        'isEmpty' => false,
-                        'isRated' => true,
-                        'isAlreadyRated' => false,
-                        'message' => "Status rated with ".$ratingV. " stars"
-                    ]);
-                } else {
+                if($status->count() > 0){
+                    $isRated = Rattings::rateStatus($status_id,$user->user_id,$ratingV,$status->first()->user_id);
+
+                    if($isRated){
+                        return response()->json([
+                            'isAuthenticated' => true,
+                            'isEmpty' => false,
+                            'isRated' => true,
+                            'isAlreadyRated' => false,
+                            'message' => "Status rated with ".$ratingV. " stars"
+                        ]);
+                    } else {
+                        return response()->json([
+                            'isAuthenticated' => true,
+                            'isEmpty' => false,
+                            'isRated' => false,
+                            'isAlreadyRated' => false,
+                            'message' => "Error occurred in rating the status."
+                        ]);
+                    }
+                }else {
                     return response()->json([
                         'isAuthenticated' => true,
                         'isEmpty' => false,
                         'isRated' => false,
                         'isAlreadyRated' => false,
-                        'message' => "Error occurred in rating the status."
+                        'isError' => true,
+                        'message' => "Status not found."
                     ]);
                 }
+
 
           }
         }

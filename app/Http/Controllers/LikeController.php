@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Models\Like;
 use App\Http\MyClasses\VerifyToken;
+use App\Models\Statuses;
 
 class LikeController extends Controller
 {
@@ -72,8 +73,10 @@ class LikeController extends Controller
                 //like it
                 // $like->status_id = $status_id;
                 // $like->user_id = $user->user_id;
+                $status = Statuses::where(['status_id' => $status_id]);
 
-                $isLiked = Like::likeStatus($user->user_id,$status_id);
+                if($status->count() > 0){
+                $isLiked = Like::likeStatus($user->user_id,$status_id,$status->first()->user_id);
                 if($isLiked){
 
                     //success
@@ -97,6 +100,16 @@ class LikeController extends Controller
                         'message' => 'Error, Please try again.'
                     ]);
                 }
+                }else{
+
+                    return response()->json([
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isAction' => false,
+                        'message' => 'Error, No status found.'
+                    ]);
+                }
+
             }
         }
 

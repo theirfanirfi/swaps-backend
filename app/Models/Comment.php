@@ -23,9 +23,9 @@ class Comment extends Model
         DB::beginTransaction();
 
         try{
-
+            $st_user = DB::select("select user_id from statuses where status_id = '$status_id'", [1]);
             DB::insert('insert into status_comments (status_id, user_id,comment) values (?, ?,?)', [$status_id, $user_id,$comment]);
-            DB::insert('insert into notifications (isComment,isAction,status_id,action_by) values (?,?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::insert('insert into notifications (isComment,isAction,status_id,action_by,followed_id) values (?,?,?,?,?)', [1, 1,$status_id,$user_id,$st_user[0]->user_id]);
             DB::commit();
             return true;
         }catch(Exception $e){

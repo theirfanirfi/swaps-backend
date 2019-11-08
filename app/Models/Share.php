@@ -18,9 +18,9 @@ class Share extends Model
     public static function shareStatus($user_id,$status_id){
         DB::beginTransaction();
         try{
-
+            $st_user = DB::select("select user_id from statuses where status_id = '$status_id'", [1]);
             DB::insert('insert into status_shares (status_id, user_id) values (?, ?)', [$status_id, $user_id]);
-            DB::insert('insert into notifications (isShare,isAction,status_id,action_by) values (?,?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::insert('insert into notifications (isShare,isAction,status_id,action_by,followed_id) values (?,?,?,?,?)', [1, 1,$status_id,$user_id,$st_user[0]->user_id]);
             DB::commit();
             return true;
 

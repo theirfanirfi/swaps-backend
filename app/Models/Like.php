@@ -21,13 +21,13 @@ class Like extends Model
     public function countLikes($status_id){
        return $likes = Like::where(['status_id' => $status_id])->count();
     }
-    public static function likeStatus($user_id,$status_id){
+    public static function likeStatus($user_id,$status_id,$followed_id){
         DB::beginTransaction();
 
         try{
 
             DB::insert('insert into statuslikes (status_id, user_id) values (?, ?)', [$status_id, $user_id]);
-            DB::insert('insert into notifications (isLike, isAction,status_id,action_by) values (?, ?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::insert('insert into notifications (isLike, isAction,status_id,action_by,followed_id) values (?, ?,?,?,?)', [1, 1,$status_id,$user_id,$followed_id]);
             DB::commit();
             return true;
         }catch(Exception $e){

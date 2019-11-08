@@ -53,12 +53,12 @@ class Rattings extends Model
 
     }
 
-    public static function rateStatus($status_id,$user_id,$rating){
+    public static function rateStatus($status_id,$user_id,$rating,$followed_id){
         DB::beginTransaction();
         try{
 
             DB::insert('insert into rattings (ratted_by_user_id,status_id,ratting) values (?, ?,?)', [$user_id,$status_id,$rating]);
-            DB::insert('insert into notifications (isRatting,isAction,status_id,action_by) values (?,?,?,?)', [1, 1,$status_id,$user_id]);
+            DB::insert('insert into notifications (isRatting,isAction,status_id,action_by,followed_id) values (?,?,?,?,?)', [1, 1,$status_id,$user_id,$followed_id]);
             DB::commit();
             return true;
 
