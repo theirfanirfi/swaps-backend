@@ -106,7 +106,7 @@ return $statuses;
 
         ->select('statuslikes.user_id','profile_image','statuses.has_attachment','statuses.attachments','status','statuses.user_id','statuses.status_id','statuses.created_at',DB::raw("avg(ratting) as ratting"),
         DB::raw("count(statuslikes.id) as likes_count"), DB::raw("count(status_shares.id) as shares_count"), DB::raw("count(status_comments.id) as comments_count"),
-        DB::raw("IF(statuslikes.user_id = '".$user_id."','true', 'false') as isLiked"))
+        DB::raw("IF(statuslikes.user_id = '".$user_id."',1, 0) as isLiked"))
         ->groupby('profile_image')
         ->groupby('status')
         ->groupby('statuslikes.user_id')

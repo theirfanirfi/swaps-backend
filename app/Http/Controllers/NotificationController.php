@@ -25,11 +25,13 @@ class NotificationController extends Controller
         else{
             $n = new Notifications();
             $noc = $n->getNotifications($user->user_id);
-            if($noc->count() > 0){
+            $count = $noc->count();
+            if($count > 0){
                 $n = $noc->get();
             return response()->json([
                 'isAuthenticated' => true,
                 'isFound' => true,
+                'count' => $count,
                 'notifications' => $n
             ]);
             }else {
@@ -72,7 +74,7 @@ class NotificationController extends Controller
         }
     }
 
-    
+
     public function getNotificationsCount(Request $req){
         $token = $req->input('token');
         $verify = new VerifyToken();
@@ -134,8 +136,8 @@ class NotificationController extends Controller
     //         if($token == null || $swap_id == null){
     //             return response()->json([
     //                 'isAuthenticated' => true,
-    //                 'isError' => true, 
-    //                 'isEmpty' => true, 
+    //                 'isError' => true,
+    //                 'isEmpty' => true,
     //                 'message' => 'Arguments must be provide.'
     //             ]);
     //         }else {
@@ -152,33 +154,33 @@ class NotificationController extends Controller
     //                 if($swap->save() && $notification->save()){
     //                     return response()->json([
     //                         'isAuthenticated' => true,
-    //                         'isError' => false, 
-    //                         'isEmpty' => false, 
+    //                         'isError' => false,
+    //                         'isEmpty' => false,
     //                         'isApproved' => true,
     //                         'message' => 'Swap Accepted.'
     //                     ]);
     //                 }else {
     //                     return response()->json([
     //                         'isAuthenticated' => true,
-    //                         'isError' => true, 
-    //                         'isEmpty' => false, 
+    //                         'isError' => true,
+    //                         'isEmpty' => false,
     //                         'isApproved' => false,
     //                         'message' => 'Error occurred in accepting the Swap. Try again.'
     //                     ]);
     //                 }
 
-                   
+
 
     //             }else {
     //                 return response()->json([
     //                     'isAuthenticated' => true,
-    //                     'isError' => true, 
-    //                     'isEmpty' => false, 
+    //                     'isError' => true,
+    //                     'isEmpty' => false,
     //                     'message' => 'No Swap found.'
     //                 ]);
-                   
+
     //             }
-                
+
     //         }
     //     }
     // }
@@ -200,8 +202,8 @@ class NotificationController extends Controller
             if($token == null || $notification_id == null){
                 return response()->json([
                     'isAuthenticated' => true,
-                    'isError' => true, 
-                    'isEmpty' => true, 
+                    'isError' => true,
+                    'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
             }else {
@@ -211,26 +213,26 @@ class NotificationController extends Controller
                     if($no->delete()){
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => false, 
-                            'isEmpty' => false, 
+                            'isError' => false,
+                            'isEmpty' => false,
                             'isCleared' => true,
                             'message' => 'Notification Cleared.'
                         ]);
                     }else {
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => true, 
-                            'isEmpty' => false, 
+                            'isError' => true,
+                            'isEmpty' => false,
                             'isCleared' => false,
                             'message' => 'Error occurred in clearing the Notification. Try again.'
                         ]);
                     }
-                   
+
                 }else {
                     return response()->json([
                         'isAuthenticated' => true,
-                        'isError' => false, 
-                        'isEmpty' => false, 
+                        'isError' => false,
+                        'isEmpty' => false,
                         'isCleared' => false,
                         'message' => 'Error occurred in clearing the Notification. Try again.'
                     ]);
@@ -257,8 +259,8 @@ class NotificationController extends Controller
             if($token == null || $notification_id == null){
                 return response()->json([
                     'isAuthenticated' => true,
-                    'isError' => true, 
-                    'isEmpty' => true, 
+                    'isError' => true,
+                    'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
             }else {
@@ -281,33 +283,33 @@ class NotificationController extends Controller
                     if($notification->save() && $swap->save()){
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => false, 
-                            'isEmpty' => false, 
+                            'isError' => false,
+                            'isEmpty' => false,
                             'isApproved' => true,
                             'message' => 'Swap Accepted.'
                         ]);
                     }else {
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => true, 
-                            'isEmpty' => false, 
+                            'isError' => true,
+                            'isEmpty' => false,
                             'isApproved' => false,
                             'message' => 'Error occurred in accepting the Swap. Try again.'
                         ]);
                     }
 
-                   
+
 
                 }else {
                     return response()->json([
                         'isAuthenticated' => true,
-                        'isError' => true, 
-                        'isEmpty' => false, 
+                        'isError' => true,
+                        'isEmpty' => false,
                         'message' => 'No such swap request found.'
                     ]);
-                   
+
                 }
-                
+
             }
         }
     }
@@ -331,8 +333,8 @@ class NotificationController extends Controller
             if($token == null || $notification_id == null){
                 return response()->json([
                     'isAuthenticated' => true,
-                    'isError' => true, 
-                    'isEmpty' => true, 
+                    'isError' => true,
+                    'isEmpty' => true,
                     'isDeclined' => false,
                     'message' => 'Arguments must be provided.'
                 ]);
@@ -350,35 +352,69 @@ class NotificationController extends Controller
                     if($notification->save()){
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => false, 
-                            'isEmpty' => false, 
+                            'isError' => false,
+                            'isEmpty' => false,
                             'isDeclined' => true,
                             'message' => 'Swap request declined.'
                         ]);
                     }else {
                         return response()->json([
                             'isAuthenticated' => true,
-                            'isError' => true, 
-                            'isEmpty' => false, 
+                            'isError' => true,
+                            'isEmpty' => false,
                             'isDeclined' => false,
                             'message' => 'Error occurred in declining the Swap. Try again.'
                         ]);
                     }
 
-                   
+
 
                 }else {
                     return response()->json([
                         'isAuthenticated' => true,
-                        'isError' => true, 
-                        'isEmpty' => false, 
+                        'isError' => true,
+                        'isEmpty' => false,
                         'message' => 'No such swap request found.',
                         'isDeclined' => false,
 
                     ]);
-                   
+
                 }
-                
+
+            }
+        }
+    }
+
+
+    public function getNotificationsForService(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isError' => false,
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        }
+        else{
+            $n = new Notifications();
+            $noc = $n->getNotifications($user->user_id);
+            $count = $noc->count();
+            if($count > 0){
+                $n = $noc->get();
+            return response()->json([
+                'isAuthenticated' => true,
+                'isFound' => true,
+                'count' => $count,
+                'notifications' => $n
+            ]);
+            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                ]);
             }
         }
     }

@@ -11,9 +11,10 @@ class Notifications extends Model
     protected $primaryKey = "notification_id";
 
     public function getNotifications($user_id){
-     $followed = DB::table('notifications')->where(['followed_id' => $user_id,'isAction' => 1])
-     ->leftjoin('users',['users.user_id' => 'notifications.follower_id'])
-     ->select('status_id','isAccepted','swap_id','swaper_id','name','profile_image','isStatus','isFollow','notification_id','notifications.created_at','follower_id')
+     $followed = DB::table('notifications')->where(['followed_id' => $user_id,'isAction' => 1])->where('action_by','!=',$user_id)
+     ->leftjoin('users',['users.user_id' => 'notifications.action_by'])
+     ->select('status_id','isAccepted','swap_id','swaper_id','name','profile_image','isStatus','isFollow','notification_id','notifications.created_at','follower_id',
+     'isLike','isComment','isShare','isTag','isRatting','isAction','action_by')
      ->orderby('notification_id','DESC');
 
     //  $swaps = DB::table('notifications')->where(['swaped_with_id' => $user_id])
