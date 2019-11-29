@@ -58,11 +58,45 @@ class NotificationController extends Controller
         else{
             $n = new Notifications();
             $noc = $n->getSwapRequests($user->user_id);
-            if($noc->count() > 0){
+            $count = $noc->count();
+            if($count > 0){
                 $n = $noc->get();
             return response()->json([
                 'isAuthenticated' => true,
                 'isFound' => true,
+                'count' => $count,
+                'notifications' => $n
+            ]);
+            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                ]);
+            }
+        }
+    }
+
+    public function getSwapRequestNotificationsForBackground(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        }
+        else{
+            $n = new Notifications();
+            $noc = $n->getSwapRequests($user->user_id);
+            $count = $noc->count();
+            if($count > 0){
+                $n = $noc->get();
+            return response()->json([
+                'isAuthenticated' => true,
+                'isFound' => true,
+                'count' => $count,
                 'notifications' => $n
             ]);
             }else {

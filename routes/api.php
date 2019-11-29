@@ -87,6 +87,7 @@ Route::get('/changePassword','ProfileController@changePassword');
 Route::group(['prefix' => 'notifications'],function(){
 Route::get('/getNotifications','NotificationController@getNotifications');
 Route::get('/getSwapRequestNotifications','NotificationController@getSwapRequestNotifications');
+Route::get('/getSwapRequestNotificationsb','NotificationController@getSwapRequestNotificationsForBackground');
 Route::get('/getNotificationsCount','NotificationController@getNotificationsCount');
 Route::get('/getSwapNotificationsCount','NotificationController@getSwapNotificationsCount');
 Route::get('/approveSwap','NotificationController@approveSwap');
@@ -102,6 +103,7 @@ Route::group(['prefix' => 'msg'],function(){
 
 Route::get('/','MessageController@getMessages');
 Route::get('/send','MessageController@sendMessage');
+Route::post('/aud','AttachmentController@sendAudio');
 Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 
 //group messages
