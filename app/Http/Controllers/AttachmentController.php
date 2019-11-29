@@ -266,12 +266,15 @@ class AttachmentController extends Controller
                          return response()->json([
                          'isError' => false,
                          'isAuthenticated' => true,
-                         'isSaved' => true,
-                         'message' => 'uploaded'
+                         'isSent' => true,
+                         'message' => 'uploaded',
+                         'msg' => $msg
                         ]);
                      }else {
                         return response()->json([
                          'isError' => true,
+                          'isSent' => false,
+
                          'isAuthenticated' => true,
                          'message' => 'Error occurred in uploading the attachment.'
                         ]);
