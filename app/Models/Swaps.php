@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 class Swaps extends Model
@@ -13,9 +14,11 @@ class Swaps extends Model
 
     public function getSwapsTab($user_id){
     //$user_id = 3;
+    $time = new DateTime("now");
     $swaps =  DB::table('swaps')->where(['poster_user_id' => $user_id])->orWhere(function($query) use ($user_id) {
       return  $query->orWhere(['swaped_with_user_id' => $user_id]);
     })->Where(['is_accepted' => 1])
+    //->where("time_to_sec(timediff($time,'swaps.time_of_swap' ))/60",'>',30)
 
     ->leftjoin('users',['users.user_id' => 'swaps.poster_user_id' ])
 

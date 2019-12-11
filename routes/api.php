@@ -104,6 +104,7 @@ Route::group(['prefix' => 'msg'],function(){
 Route::get('/','MessageController@getMessages');
 Route::get('/send','MessageController@sendMessage');
 Route::post('/aud','AttachmentController@sendAudio');
+Route::post('/gaud','AttachmentController@sendGroupAudio');
 Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
 
 //group messages

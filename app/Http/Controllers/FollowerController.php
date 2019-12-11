@@ -8,6 +8,7 @@ use App\Models\Followers;
 use App\Models\Swaps;
 use App\Models\Notifications;
 use App\User;
+use DateTime;
 
 class FollowerController extends Controller
 {
@@ -72,10 +73,10 @@ class FollowerController extends Controller
                               'swaps' => $sw,
                               'status_id' => $status_id,
                              'message' => 'loading....'
-                         ]);   
+                         ]);
                     }
 
-                 
+
                 }
                 else
                 {
@@ -85,7 +86,7 @@ class FollowerController extends Controller
                     'status_id' => $status_id,
                     'isFollowersFound' => false,
                     'message' => 'You have not followed any user yet.'
-                ]); 
+                ]);
                 }
             }
         }
@@ -113,7 +114,7 @@ class FollowerController extends Controller
                 'isError' => false,
                 'isEmpty' => true,
                 'message' => 'None of the argument can be missing.'
-            ]); 
+            ]);
         }
         else {
             $swap = Swaps::where(['swaped_with_user_id' => $swaped_with_user_id,'status_id' => $status_id]);
@@ -124,7 +125,7 @@ class FollowerController extends Controller
                     'isAlready' => true,
                     'isError' => false,
                     'message' => 'Status is already swaped.'
-                ]);  
+                ]);
             }
             else {
 
@@ -132,6 +133,8 @@ class FollowerController extends Controller
                 $sw->poster_user_id = $user->user_id;
                 $sw->swaped_with_user_id = $swaped_with_user_id;
                 $sw->status_id = $status_id;
+                date_default_timezone_set('Asia/Karachi');
+                $sw->time_of_swap = new DateTime("now") ;
 
                 if($sw->save())
                 {
@@ -152,14 +155,14 @@ class FollowerController extends Controller
                         'message' => 'Status swap request is sent.'
                     ]);
                 }
-                else 
+                else
                 {
                     return response()->json([
                     'isAuthenticated' => true,
                     'isSwaped' => false,
                     'isAlready' => false,
                     'isError' => true,
-                    'message' => 'Error Occurred in swapping the status. Please try again.'   
+                    'message' => 'Error Occurred in swapping the status. Please try again.'
                     ]);
                 }
             }
@@ -187,12 +190,12 @@ class FollowerController extends Controller
                 'isError' => false,
                 'isEmpty' => true,
                 'message' => 'None of the argument can be missing.'
-            ]); 
+            ]);
         }
         else {
             $swap = Swaps::where(['swaped_with_user_id' => $swaped_with_user_id,'status_id' => $status_id]);
             if($swap->count() > 0) {
-                
+
                 if($swap->delete()){
                     return response()->json([
                         'isAuthenticated' => true,
@@ -200,7 +203,7 @@ class FollowerController extends Controller
                         'isError' => false,
                         'isExist' => true,
                         'message' => 'Status is unswaped.'
-                    ]);  
+                    ]);
                 }
                 else {
                     return response()->json([
@@ -209,7 +212,7 @@ class FollowerController extends Controller
                         'isError' => true,
                         'isExist' => true,
                         'message' => "Error occurred in unswaping. Please try again."
-                    ]);  
+                    ]);
                 }
 
             }
@@ -220,7 +223,7 @@ class FollowerController extends Controller
                     'isError' => true,
                     'isExist' => false,
                     'message' => "Status does not exist."
-                ]);  
+                ]);
 
             }
         }
@@ -289,7 +292,7 @@ class FollowerController extends Controller
                 'isError' => true,
                 'isEmpty' => true,
                 'message' => 'None of the argument can be empty.'
-            ]); 
+            ]);
         }else {
             $follow = Followers::where(['followed_user_id' => $to_be_followed,'follower_user_id' => $user->user_id]);
             $userr = User::where(['user_id' => $to_be_followed]);
@@ -361,7 +364,7 @@ class FollowerController extends Controller
                 'isError' => true,
                 'isEmpty' => true,
                 'message' => 'None of the argument can be empty.'
-            ]); 
+            ]);
         }else {
             $follow = Followers::where(['followed_user_id' => $to_un_be_followed,'follower_user_id' => $user->user_id]);
             $userr = User::where(['user_id' => $to_un_be_followed]);
