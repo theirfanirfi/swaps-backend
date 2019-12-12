@@ -26,8 +26,8 @@ class SwapsController extends Controller
             $swaps = new Swaps();
             $s = $swaps->getSwapsTab($user->user_id);
 
-            if($s->count() > 0 ){
-                $s = $s->get();
+            if(sizeof($s) > 0 ){
+               // $s = $s->get();
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => true,
