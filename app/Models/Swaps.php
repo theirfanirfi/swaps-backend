@@ -89,7 +89,7 @@ LEFT JOIN users as swaped_with on swaped_with.`user_id` = swaps.`swaped_with_use
 LEFT JOIN statuslikes on statuslikes.`status_id` = swaps.`status_id`
 
 
-where (poster_user_id = '$user_id' and time_to_sec(timediff('$time',time_of_swap))/60 < 1440 and is_accepted = 1) or (swaped_with_user_id = '$user_id' and time_to_sec(timediff('$time',time_of_swap))/60 < 1440 and is_accepted = 1);
+where (poster_user_id = '$user_id' and time_to_sec(timediff('$time',time_of_swap))/60 < 1440 and is_accepted = 1 and is_reviewed = 0) or (swaped_with_user_id = '$user_id' and time_to_sec(timediff('$time',time_of_swap))/60 < 1440 and is_accepted = 1 and is_reviewed = 0);
 
 
 
@@ -109,5 +109,21 @@ LEFT JOIN status_comments on status_comments.`status_id` = swaps.`status_id` */
 
         return $swaps;
 
+    }
+
+
+
+    public static function getSwapReviews($user_id){
+        $reviews = DB::select("
+        SELECT
+avg(review_rating) as avg_ratting, count(*) as reviews_count
+FROM swaps
+
+WHERE `swaped_with_user_id` = '$user_id' and is_expired = '1' and is_reviewed = '1'
+
+
+        ", [1]);
+
+        return $reviews;
     }
 }

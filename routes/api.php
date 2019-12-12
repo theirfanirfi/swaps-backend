@@ -82,6 +82,7 @@ Route::get('/getProfileStats','ProfileController@getProfileStats');
 Route::get('/getProfileUserStats','ProfileController@getProfileUserStats');
 Route::get('/updateProfileDetails','ProfileController@updateProfileDetails');
 Route::get('/changePassword','ProfileController@changePassword');
+Route::get('/swapreviews','SwapsController@getSwapReviewsForUserProfile');
 });
 
 Route::group(['prefix' => 'notifications'],function(){
