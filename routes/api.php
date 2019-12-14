@@ -60,6 +60,7 @@ Route::get('/','SwapsController@getSwaps');
 Route::get('/user','SwapsController@getUserSwaps');
 Route::get('/unswap','SwapsController@unswap');
 Route::get('/getSwap','SwapsController@getSwap');
+Route::get('/getSwapsrev','SwapsController@getSwapsForReviewIfNotReviewed');
 });
 
 Route::group(['prefix' => 'auth'],function(){

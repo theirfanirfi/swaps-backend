@@ -230,4 +230,56 @@ class SwapsController extends Controller
     }
     }
 
+
+
+
+
+    public function getSwapsForReviewIfNotReviewed(Request $req){
+
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if($token == "" || empty($token)){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'message' => 'Arguments must be provided'
+            ]);
+        }else {
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+            ]);
+        }
+        else
+        {
+            $swaps = new Swaps();
+            $s = $swaps->getSwapsForReviewIfNotReviewed($user->user_id);
+
+            if(sizeof($s) > 0 ){
+               // $s = $s->get();
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'isError' => false,
+                    'swaps' => $s
+                ]);
+            }
+            else {
+                $s = $s->get();
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                    'isError' => false,
+                    'swaps' => $s
+                ]);
+            }
+
+        }
+
+    }
+}
+
 }
