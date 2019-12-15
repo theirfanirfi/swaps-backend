@@ -256,7 +256,7 @@ class SwapsController extends Controller
         else
         {
             $swaps = new Swaps();
-            $s = $swaps->getSwapsForReviewIfNotReviewed($user->user_id);
+            $s = $swaps->getExpiredSwapsForReviewIfNotReviewed($user->user_id);
 
             if(sizeof($s) > 0 ){
                // $s = $s->get();
@@ -280,6 +280,87 @@ class SwapsController extends Controller
         }
 
     }
+}
+
+
+public function reviewSwapByUpdatingTheRow(Request $req){
+
+    $token = $req->input('token');
+    $id = $req->input('id');
+    $rv = $req->input('rv');
+    $rt = $req->input('rt');
+    $verify = new VerifyToken();
+    $user = $verify->verifyTokenInDb($token);
+
+    if($id == "" || empty($id) || $token == "" || empty($token) || $rv == "" || empty($rv) || $rt == "" || empty($rt)){
+        return response()->json([
+            'isAuthenticated' => false,
+            'isError' => true,
+            'message' => 'Arguments must be provided'
+        ]);
+    }else {
+    if(!$user){
+        return response()->json([
+            'isAuthenticated' => false,
+            'isError' => true,
+            'message' => 'You are not loggedin.'
+
+        ]);
+    }
+    else
+    {
+        $s = Swaps::checkAndReturnSwap($user->user_id,$id);
+
+        if(sizeof($s) > 0 ){
+           // $s = $s->get();
+
+           $sw = Swaps::where(['swap_id' => $id]);
+
+           if($sw->count() > 0){
+               $sw = $sw->first();
+               $sw->review_rating = $rt <= 5.0 ? $rt : 0.0;
+               $sw->review_msg = $rv;
+               $sw->is_expired = 1;
+               $sw->is_reviewed = 1;
+
+               if($sw->save()){
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isReviewed' => true,
+                    'isError' => false,
+                    'message' => 'Swap reviewed.'
+                ]);
+               }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isReviewed' => false,
+                    'isError' => true,
+                    'message' => 'Error occurred in reviewing the swap. Try again'
+                ]);
+               }
+
+           }else {
+            return response()->json([
+                'isAuthenticated' => true,
+                'isReviewed' => false,
+                'isError' => true,
+                'message' => 'Swap not found.'
+            ]);
+           }
+        }
+        else {
+            return response()->json([
+                'isAuthenticated' => true,
+                'isReviewed' => false,
+                'isError' => true,
+                'message' => 'Swap not found.'
+
+            ]);
+        }
+
+    }
+
+}
 }
 
 }

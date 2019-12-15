@@ -61,6 +61,8 @@ Route::get('/user','SwapsController@getUserSwaps');
 Route::get('/unswap','SwapsController@unswap');
 Route::get('/getSwap','SwapsController@getSwap');
 Route::get('/getSwapsrev','SwapsController@getSwapsForReviewIfNotReviewed');
+Route::get('/rvswap','SwapsController@reviewSwapByUpdatingTheRow');
+
 });
 
 Route::group(['prefix' => 'auth'],function(){

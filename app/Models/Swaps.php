@@ -187,4 +187,20 @@ WHERE `swaped_with_user_id` = '$user_id' and is_expired = '1' and is_reviewed = 
             return $swaps;
 
         }
+
+
+
+        public static function checkAndReturnSwap($user_id,$swap_id){
+
+            date_default_timezone_set('Asia/Karachi');
+            $time = new DateTime("now");
+
+                $time = $time->format("Y-m-d H:i:s a");
+
+            $swap = DB::select("
+            SELECT * FROM swaps WHERE swap_id = '$swap_id' and swaped_with_user_id = '$user_id' and time_to_sec(timediff('$time',time_of_swap))/60 > 1440 and is_accepted = 1 and is_reviewed = 0
+            ", [1]);
+
+            return $swap;
+        }
 }
