@@ -39,7 +39,7 @@ class Statuses extends Model
 
 
         $statuses = DB::select("
-        SELECT statuses.`status`,statuses.has_attachment,statuses.attachments,statuses.user_id,statuses.status_id,statuses.created_at,is_users_tagged,
+        SELECT users.name, users.profile_image, statuses.`status`,statuses.has_attachment,statuses.attachments,statuses.user_id,statuses.status_id,statuses.created_at,is_users_tagged,
 (select count(*) from status_tags WHERE status_tags.status_id = statuses.`status_id`) as tag_count,
 (select users.name from status_tags LEFT JOIN users on users.user_id = status_tags.`tagged_user_id` WHERE status_tags.status_id = statuses.`status_id` LIMIT 1) as first_tag,
 (select avg(rattings.ratting) from rattings WHERE rattings.status_id = statuses.status_id) as ratting,
@@ -48,7 +48,9 @@ class Statuses extends Model
 
 (select count(*) from status_shares WHERE status_shares.`status_id` = statuses.`status_id`) as shares_count,
 (select count(*) from status_comments WHERE status_comments.`status_id` = statuses.`status_id`) as comments_count
+
 FROM statuses
+LEFT JOIN users on users.user_id = statuses.user_id
 WHERE statuses.user_id = $user_id ORDER BY statuses.status_id DESC", [1]);
 return $statuses;
 
@@ -135,4 +137,52 @@ return $statuses;
         ->orderBy('statuses.status_id','DESC');
         return $statuses;
     }
+
+
+    public function getStatusCommentsForWeb($status_id){
+
+    }
+
+
+
+    public function getStatusesForReact($user_id){
+
+
+
+            $statuses = DB::select("
+            SELECT users.name, users.profile_image, statuses.`status`,statuses.has_attachment,statuses.attachments,statuses.user_id,statuses.status_id,statuses.created_at,is_users_tagged,
+    (select count(*) from status_tags WHERE status_tags.status_id = statuses.`status_id`) as tag_count,
+    (select users.name from status_tags LEFT JOIN users on users.user_id = status_tags.`tagged_user_id` WHERE status_tags.status_id = statuses.`status_id` LIMIT 1) as first_tag,
+    (select avg(rattings.ratting) from rattings WHERE rattings.status_id = statuses.status_id) as ratting,
+    (select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id`) as likes_count,
+    (select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id` AND statuslikes.`user_id` = $user_id) as isLiked,
+
+    (select count(*) from status_shares WHERE status_shares.`status_id` = statuses.`status_id`) as shares_count,
+    (select count(*) from status_comments WHERE status_comments.`status_id` = statuses.`status_id`) as comments_count
+
+    FROM statuses
+    LEFT JOIN users on users.user_id = statuses.user_id
+    WHERE statuses.user_id = $user_id ORDER BY statuses.status_id DESC", [1]);
+    return $statuses;
+
+
+
+    // "status_id": 7,
+    // "user_id": 3,
+    // "status": "hello how are you.",
+    // "created_at": "2018-12-05 16:46:27",
+    // "updated_at": "2018-12-07 16:13:03",
+    // "ratting_id": 1,
+    // "ratted_by_user_id": 3,
+    // "ratting": 4,
+    // "name": "IrfanUllah",
+    // "username": "irfi",
+    // "email": "theirfi@gmail.com",
+    // "email_verified_at": null,
+    // "password": "$2y$10$apt794t5NK3r51bcMToB7eHcPaqDxYhvZGXzv/hRfiCmusbR378wm",
+    // "token": "$2y$10$R9BlVJKtmCU7BZs1eoKXhedYuPJtqGH48isHoKrqinzJucmePidOW",
+    // "profile_image": null,
+
+
+        }
 }

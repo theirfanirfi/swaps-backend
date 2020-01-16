@@ -70,6 +70,7 @@ class CommentController extends Controller
                         'isError' => false,
                         'isAuthenticated' => true,
                         'isCommented' => true,
+                        'comment' => Comment::getCommentById($isCommented),
                         'isAlreadyCommented' => false,
                         'message' => 'Comment posted on the status.'
                     ]);

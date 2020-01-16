@@ -13,6 +13,12 @@ class Comment extends Model
         return Comment::where(['user_id' => $user_id, 'comment' => $comment, 'status_id' => $status_id])->count();
     }
 
+    public static function getCommentById($comment_id){
+        return DB::table('status_comments')->where(['id' => $comment_id])
+        ->leftjoin('users',['users.user_id' => 'status_comments.user_id'])
+        ->select('status_comments.*','users.name','users.profile_image')->get()->first();
+    }
+
     public function getComments($status_id){
         return DB::table('status_comments')->where(['status_id' => $status_id])
         ->leftjoin('users',['users.user_id' => 'status_comments.user_id' ])
@@ -24,10 +30,15 @@ class Comment extends Model
 
         try{
             $st_user = DB::select("select user_id from statuses where status_id = '$status_id'", [1]);
-            DB::insert('insert into status_comments (status_id, user_id,comment) values (?, ?,?)', [$status_id, $user_id,$comment]);
+            // DB::insert('insert into status_comments (status_id, user_id,comment) values (?, ?,?)', [$status_id, $user_id,$comment]);
+
+            $id = DB::table('status_comments')->insertGetId(
+                ['status_id' => $status_id, 'user_id' => $user_id,'comment' => $comment]
+            );
+
             DB::insert('insert into notifications (isComment,isAction,status_id,action_by,followed_id) values (?,?,?,?,?)', [1, 1,$status_id,$user_id,$st_user[0]->user_id]);
             DB::commit();
-            return true;
+            return $id;
         }catch(Exception $e){
             DB::rollback();
             return false;

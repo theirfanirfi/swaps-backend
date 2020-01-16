@@ -22,7 +22,7 @@ Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
 
 });
 
-Route::group(['prefix' => 'status'],function(){
+Route::group(['prefix' => 'status', 'middleware' => 'cors'],function(){
 Route::post('compose','StatusController@composeStatusPost');
 
 Route::post('composetag','StatusController@composeStatusTagPost');
@@ -147,11 +147,16 @@ Route::group(['prefix' => 'group'],function(){
 //Like and dislike
 
 Route::post('like','LikeController@like');
+Route::get('likes','LikeController@like')->middleware('cors');
+Route::get('shares','ShareController@share')->middleware('cors');
+Route::get('ushares','ShareController@unshare')->middleware('cors');
 Route::post('share','ShareController@share');
 
 //comment
 Route::post('comment','CommentController@comment');
+Route::get('commentons','CommentController@comment')->middleware('cors');
 Route::post('comments','CommentController@getComments');
+Route::get('getcomments','CommentController@getComments')->middleware('cors');
 
 
 //tag users

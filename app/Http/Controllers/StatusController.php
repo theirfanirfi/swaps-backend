@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+//header("Access-Control-Allow-Origin: *");
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Auth;
@@ -141,6 +141,46 @@ public function getStatuses(Request $req)
                      'statuses' => $st,
                      'message' => 'loading....'
                 ]);
+
+            }
+            else
+            {
+               return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                    'message' => 'You have not posted any status yet. '.$user->user_id
+                ]);
+            }
+
+        }
+}
+
+
+public function getStatusesForWeb(Request $req)
+{
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false
+            ]);
+        }
+        else
+        {
+            $statuses = new Statuses();
+            $st =  $statuses->getStatusesForReact($user->user_id);
+            if(sizeof($st) > 0)
+            {
+                //$st = $st->get();
+               return response()->json([
+                     'isAuthenticated' => true,
+                     'isFound' => true,
+                     'statuses' => $st,
+                     'message' => 'loading....'
+                ]);
+
             }
             else
             {
