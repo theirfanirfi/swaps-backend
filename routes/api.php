@@ -55,7 +55,7 @@ Route::get('/getUserFollowers','FollowerController@getUserFollowers');
 
 });
 
-Route::group(['prefix' => 'swaps'],function(){
+Route::group(['prefix' => 'swaps','middleware' => 'cors'],function(){
 Route::get('/','SwapsController@getSwaps');
 Route::get('/user','SwapsController@getUserSwaps');
 Route::get('/unswap','SwapsController@unswap');

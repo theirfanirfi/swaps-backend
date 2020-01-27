@@ -229,6 +229,7 @@ public function rateStatus(Request $req){
                     'isEmpty' => false,
                     'isRated' => false,
                     'isAlreadyRated' => true,
+                    'rating' => $ratingV,
                     'message' => "Status rating updated with ".$ratingV. " stars"
                 ]);
               } else {
@@ -260,6 +261,7 @@ public function rateStatus(Request $req){
                             'isEmpty' => false,
                             'isRated' => true,
                             'isAlreadyRated' => false,
+                            'rating' => $ratingV,
                             'message' => "Status rated with ".$ratingV. " stars"
                         ]);
                     } else {
