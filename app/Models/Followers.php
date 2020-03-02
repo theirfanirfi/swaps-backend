@@ -54,7 +54,7 @@ class Followers extends Model
     //     ->joinSub($followers,'fone',function($join) use($profile_id, $user_id) {
     //         $join->on(['fone.followed_user_id' => $profile_id, 'followers.follower_user_id' => $user_id]);
     //     })
-        
+
     //    ;
 
         return $followers;

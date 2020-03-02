@@ -88,9 +88,10 @@ Route::get('/changePassword','ProfileController@changePassword');
 Route::get('/swapreviews','SwapsController@getSwapReviewsForUserProfile');
 });
 
-Route::group(['prefix' => 'notifications'],function(){
+Route::group(['prefix' => 'notifications','middleware' => 'cors'],function(){
 Route::get('/getNotifications','NotificationController@getNotifications');
 Route::get('/getSwapRequestNotifications','NotificationController@getSwapRequestNotifications');
+Route::get('/getSwapRequestNotificationsr','NotificationController@getSwapRequestNotificationsForReactWeb');
 Route::get('/getSwapRequestNotificationsb','NotificationController@getSwapRequestNotificationsForBackground');
 Route::get('/getNotificationsCount','NotificationController@getNotificationsCount');
 Route::get('/getSwapNotificationsCount','NotificationController@getSwapNotificationsCount');
