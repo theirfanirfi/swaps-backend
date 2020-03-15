@@ -268,7 +268,7 @@ class SwapsController extends Controller
                 ]);
             }
             else {
-                $s = $s->get();
+                // $s = $s->get();
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,

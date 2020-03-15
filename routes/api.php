@@ -78,10 +78,11 @@ Route::get('/getStatusRaters','RatingController@getStatusRaters');
 });
 
 
-Route::group(['prefix' => 'profile'],function(){
+Route::group(['prefix' => 'profile','middleware' => 'cors'],function(){
 Route::post('/updateImage','ProfileController@updateImage');
 Route::get('/updateDescription','ProfileController@updateDescription');
 Route::get('/getProfileStats','ProfileController@getProfileStats');
+Route::get('/getProfileStatsr','ProfileController@getProfileStatsForReact');
 Route::get('/getProfileUserStats','ProfileController@getProfileUserStats');
 Route::get('/updateProfileDetails','ProfileController@updateProfileDetails');
 Route::get('/changePassword','ProfileController@changePassword');
@@ -90,6 +91,7 @@ Route::get('/swapreviews','SwapsController@getSwapReviewsForUserProfile');
 
 Route::group(['prefix' => 'notifications','middleware' => 'cors'],function(){
 Route::get('/getNotifications','NotificationController@getNotifications');
+Route::get('/getNotificationsrw','NotificationController@getNotificationsForReactWeb');
 Route::get('/getSwapRequestNotifications','NotificationController@getSwapRequestNotifications');
 Route::get('/getSwapRequestNotificationsr','NotificationController@getSwapRequestNotificationsForReactWeb');
 Route::get('/getSwapRequestNotificationsb','NotificationController@getSwapRequestNotificationsForBackground');

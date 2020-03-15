@@ -30,6 +30,33 @@ class Notifications extends Model
 
     }
 
+    public function getNotificationsForReactWeb($user_id){
+        $actionNotifications = DB::select("
+
+        SELECT users.name, users.profile_image, statuses.`status`,statuses.has_attachment,statuses.attachments,
+        statuses.user_id,statuses.status_id,notifications.created_at as notification_created_at,statuses.created_at as status_created_at, is_users_tagged,notification_id,
+        isAccepted,swap_id,swaper_id,isStatus,isFollow,follower_id,
+        isLike,isComment,isShare,isTag,isRatting,isAction,action_by,
+(select count(*) from status_tags WHERE status_tags.status_id = statuses.`status_id`) as tag_count,
+(select users.name from status_tags LEFT JOIN users on users.user_id = status_tags.`tagged_user_id` WHERE status_tags.status_id = statuses.`status_id` LIMIT 1) as first_tag,
+(select avg(rattings.ratting) from rattings WHERE rattings.status_id = statuses.status_id) as ratting,
+(select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id`) as likes_count,
+(select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id` AND statuslikes.`user_id` = $user_id) as isLiked,
+
+(select count(*) from status_shares WHERE status_shares.`status_id` = statuses.`status_id`) as shares_count,
+(select count(*) from status_comments WHERE status_comments.`status_id` = statuses.`status_id`) as comments_count
+
+FROM notifications
+LEFT JOIN users on users.user_id = notifications.action_by
+LEFT JOIN statuses on statuses.status_id = notifications.status_id
+WHERE followed_id = $user_id AND isAction = 1 AND action_by != $user_id
+
+        ", [1]);
+
+        return $actionNotifications;
+
+       }
+
 
     public function getSwapRequests($user_id){
         $swaps = DB::table('notifications')->where(['swaped_with_id' => $user_id, 'isAccepted' => 0, 'isDeclined' => 0,'isAction' => 0])

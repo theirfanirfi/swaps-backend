@@ -58,4 +58,21 @@ class User extends Authenticatable
         return User::where(['user_id' => $user_id])
         ->select('user_id','name','profile_image');
     }
+
+    public static function getUserAndStatsForProfile($user_id){
+        return $profile = DB::select("
+
+        SELECT avg(review_rating) as avg_ratting, count(*) as reviews_count,
+        (select count(*) from swaps WHERE poster_user_id='$user_id') as swaps,
+        (select count(*) from statuses WHERE statuses.user_id = '$user_id') as statuses,
+        (select count(*) from followers WHERE followed_user_id = '$user_id') as followers
+        FROM `swaps` WHERE `swaped_with_user_id` = '$user_id' and is_expired = '1' and is_reviewed = '1'
+
+        ", [1]);
+    }
+
+    public static function getUserDetailsForProfile($user_id){
+        return User::where(['user_id' => $user_id])
+        ->select('user_id','name','profile_image','profile_description');
+    }
 }

@@ -27,7 +27,7 @@ class ProfileController extends Controller
         }
         else
         {
-             
+
         if(!$req->hasFile('image') || $token == ""){
             return response()->json([
                 'isEmpty' => true,
@@ -36,7 +36,7 @@ class ProfileController extends Controller
                 'message' => 'Either image or arugment is not provided.'
             ]);
             }else {
-    
+
                 $file = $req->file('image');
                 $path = "./profile/";
                 $file_name = $file->getClientOriginalName();
@@ -149,6 +149,7 @@ class ProfileController extends Controller
                 $swaps = Swaps::where(['poster_user_id' => $user->user_id])->count();
                 $status = Statuses::where(['user_id' => $user->user_id])->count();
                 $followers = Followers::where(['followed_user_id' => $user->user_id])->count();
+                // $stats = Swaps::getSwapReviews($user->user_id);
 
                 return response()->json([
                     'isEmpty' => false,
@@ -163,13 +164,47 @@ class ProfileController extends Controller
         }
     }
 
+    public function getProfileStatsForReact(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        }
+        else{
+            if($token == ""){
+                return response()->json([
+                    'isEmpty' => true,
+                    'isError' => true,
+                    'isAuthenticated' => true,
+                    'message' => 'Arguments required.'
+                ]);
+            } else {
+                $user_s = User::getUserDetailsForProfile($user->user_id);
+                $stats = User::getUserAndStatsForProfile($user->user_id);
+                if($user_s->count() > 0 || sizeof($stats) > 0)
+                return response()->json([
+                    'isEmpty' => false,
+                    'isError' => false,
+                    'isFound' => true,
+                    'stats'=> $stats[0],
+                    'user' => $user_s->first(),
+                    'isAuthenticated' => true,
+                ]);
+            }
+        }
+    }
+
     public function getProfileUserStats(Request $req){
         $user_id = $req->input('id');
         $token = $req->input('token');
 
         $tuser = "";
 
-     
+
 
             if($user_id == ""){
                 return response()->json([
@@ -217,10 +252,10 @@ class ProfileController extends Controller
                     'isAuthenticated' => true,
                 ]);
         }
-               
-           
+
+
             }
-        
+
     }
     public function updateProfileDetails(Request $req){
         $token = $req->input('token');

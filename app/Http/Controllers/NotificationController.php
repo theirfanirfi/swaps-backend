@@ -43,6 +43,38 @@ class NotificationController extends Controller
         }
     }
 
+    public function getNotificationsForReactWeb(Request $req){
+        $token = $req->input('token');
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+
+        if(!$user){
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        }
+        else{
+            $n = new Notifications();
+            $noc = $n->getNotificationsForReactWeb($user->user_id);
+            $count = sizeof($noc);
+            if($count > 0){
+                // $n = $noc->get();
+            return response()->json([
+                'isAuthenticated' => true,
+                'isFound' => true,
+                'count' => $count,
+                'notifications' => $noc
+            ]);
+            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => false,
+                ]);
+            }
+        }
+    }
+
 
     public function getSwapRequestNotifications(Request $req){
         $token = $req->input('token');
