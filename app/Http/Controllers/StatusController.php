@@ -17,6 +17,52 @@ class StatusController extends Controller
 {
     //
 
+    public function getStatusForReact(Request $req){
+        $token = $req->input('token');
+        $status_id = $req->input('status_id');
+        //echo $token;
+        if($token == null || $status_id == null){
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'isEmpty' => true,
+                'message' => "Arguments must be provided."
+            ]);
+        }else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+            if(!$user){
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'message' => "You are not loggedin. Please login and try again."
+                ]);
+            }else {
+                $status = Statuses::getStatusForReactWeb($user->user_id, $status_id);
+                if(sizeof($status) > 0){
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isError' => false,
+                        'isEmpty' => false,
+                        'isFound' => true,
+                        'status_obj'  => $status[0],
+                        'message' => "loading..."
+                    ]);
+                }else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isError' => true,
+                        'isEmpty' => false,
+                        'message' => "No status found."
+                    ]);
+
+                }
+
+            }
+        }
+
+
+    }
+
     public function getStatus(Request $req){
         $token = $req->input('token');
         $status_id = $req->input('status_id');
@@ -463,9 +509,9 @@ public function discoverStatuses(Request $req)
         {
             $statuses = new Statuses();
             $st =  $statuses->discoverStatuses($user->user_id);
-            if($st->count() > 0)
+            if(sizeof($st) > 0)
             {
-                $st = $st->limit(50)->get();
+                // $st = $st->limit(50)->get();
                return response()->json([
                      'isAuthenticated' => true,
                      'isFound' => true,
