@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Messages;
 use App\Models\Participants;
 use App\Http\MyClasses\VerifyToken;
+use Faker\Provider\File;
+use Illuminate\Support\Facades\Storage;
+
 class MessageController extends Controller
 {
     //
@@ -66,11 +69,15 @@ class MessageController extends Controller
     		}
 
     		if($msg->save()){
+                $s_msg = Messages::getMessageForReact($user->user_id,$msg->m_id);
     			 return response()->json([
                 'isAuthenticated' => true,
                 'isEmpty' => false,
                 'isError' => false,
                 'isSent' => true,
+                'one' => $p->user_one,
+                'two' => $p->user_two,
+                's_message' => $s_msg[0],
                 'message' => 'Message sent.'
             	]);
 
@@ -184,8 +191,102 @@ if($token == "" || $chat_id == ""){
     }
 
 
+	public function getMessagesForReact(Request $req){
+        $token = $req->input('token');
+        $TO_CHAT_WITH = $req->input('id');
+        if($token != null && $TO_CHAT_WITH != null){
+       $verify = new VerifyToken();
+       $user = $verify->verifyTokenInDb($token);
 
+       if(!$user){
+           return response()->json([
+               'isAuthenticated' => false,
+               'isEmpty' => false,
+               'isError' => true,
+               'response_message' => 'Not authenticated'
+           ]);
+       }
+       else
+       {
+           $messages = Messages::getMessagesForReact($user->user_id,$TO_CHAT_WITH);
+           if(sizeof($messages) > 0){
+
+                   return response()->json([
+                       'isFound' => true,
+                       'isError' => false,
+                       'isAuthenticated' => true,
+                       'response_message' => 'loading',
+                       'p' => Messages::getUserOneAndTwo($user->user_id,$TO_CHAT_WITH)[0],
+                       'messages' => $messages
+                   ]);
+
+           }else {
+
+                   return response()->json([
+                       'isFound' => false,
+                       'isError' => false,
+                       'isAuthenticated' => true,
+                       'response_message' => 'You have not chated with the user yet.'
+                   ]);
+           }
+
+       }
+   }else {
+         return response()->json([
+               'isAuthenticated' => false,
+               'isEmpty' => true,
+               'isError' => true,
+               'response_message' => 'Arguments must be provided.'
+           ]);
+   }
+   }
+
+
+   public function getMessageForReact(Request $req){
+    $token = $req->input('token');
+    $msg_id = $req->input('id');
+    if($token != null && $msg_id != null){
+   $verify = new VerifyToken();
+   $user = $verify->verifyTokenInDb($token);
+
+   if(!$user){
+       return response()->json([
+           'isAuthenticated' => false,
+           'isEmpty' => false,
+           'isError' => true,
+           'response_message' => 'Not authenticated'
+       ]);
+   }
+   else
+   {
+       $msg = Messages::getMessageForReact($user->user_id,$msg_id);
+       if(sizeof($msg) > 0){
+        return response()->json([
+            'isFound' => true,
+            'isError' => false,
+            'message' => $msg[0]
+        ]);
+       }else {
+        return response()->json([
+            'isFound' => true,
+            'isError' => false,
+            'message' => 'message not found'
+        ]);
+       }
+
+   }
+}
+   }
 
     //////////////////// ******************** GROUP MESSSAGES *********************** //////////////
+
+
+    public function getImage($filename){
+
+        // $path = $req->input('me');
+        // $p = public_path()."/profile/".$filename;
+        $file_path = public_path('profile/'.$filename);
+        return Storage::download($file_path);
+    }
 
 }

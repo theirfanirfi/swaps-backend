@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => 'user', 'middleware'=>'UserWare'],function(){
 	Route::get('/','UserController@getUser');
-
 });
 
 Route::group(['prefix' => 'status', 'middleware' => 'cors'],function(){
@@ -103,17 +102,19 @@ Route::get('/declineSwap','NotificationController@declineSwap');
 Route::get('/clear','NotificationController@clear');
 });
 
-Route::group(['prefix' => 'participants'],function(){
+Route::group(['prefix' => 'participants','middleware' => 'cors'],function(){
 Route::get('/','ParticipantsController@getParticipants');
 });
 
-Route::group(['prefix' => 'msg'],function(){
+Route::group(['prefix' => 'msg','middleware' => 'cors'],function(){
 
 Route::get('/','MessageController@getMessages');
+Route::get('/get','MessageController@getMessagesForReact');
 Route::get('/send','MessageController@sendMessage');
 Route::post('/aud','AttachmentController@sendAudio');
 Route::post('/gaud','AttachmentController@sendGroupAudio');
 Route::get('/getUnReadAndLast','MessageController@getUnReadMessageAndCount');
+Route::get('getmessage','MessageController@getMessageForReact');
 
 //group messages
 Route::get('/gc','GroupMessagesController@getGroupMessages');
@@ -208,4 +209,7 @@ Route::get('/check',function(){
 	// $a = json_decode($arr);
 	// echo $a;
 	//echo $arr;
+
 });
+Route::get('im','MessageController@getMessageForReact');
+
