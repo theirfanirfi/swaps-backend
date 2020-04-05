@@ -39,7 +39,7 @@ Route::get('/getr','StatusController@getStatusForReact');
 });
 
 
-Route::group(['prefix' => 'followers'],function(){
+Route::group(['prefix' => 'followers','middleware' => 'cors'],function(){
 Route::get('/','FollowerController@getFollowers');
 Route::get('/swapStatus','FollowerController@swapStatus');
 Route::get('/deSwapStatus','FollowerController@deSwapStatus');
@@ -134,9 +134,11 @@ Route::post('send','AttachmentController@send');
 
 //search
 
-Route::group(['prefix' => 'search'],function(){
+Route::group(['prefix' => 'search','middleware' => 'cors'],function(){
 Route::get('/status', 'SearchController@searchStatuses');
+Route::get('/statusr', 'SearchController@searchStatusesForReactTab');
 Route::get('/users', 'SearchController@searchUsers');
+Route::get('/usersr', 'SearchController@searchUsersForReactTab');
 });
 
 

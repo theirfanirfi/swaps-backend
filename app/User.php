@@ -54,6 +54,17 @@ class User extends Authenticatable
         return $followers;
     }
 
+    public static function searchUsersForReact($keyword,$user_id){
+        return DB::select("
+        SELECT users.user_id,name,username,profile_image,created_at,
+(select count(*) from followers where followed_user_id = users.user_id AND follower_user_id = $user_id) as isFollowed,
+(select count(*) from followers where followed_user_id = users.user_id) as followers,
+(select count(*) from followers where follower_user_id = users.user_id) as followed
+ FROM users WHERE users.name LIKE '%$keyword%' AND users.user_id != $user_id
+
+        ", [1]);
+    }
+
     public static function getUserForTaging($user_id){
         return User::where(['user_id' => $user_id])
         ->select('user_id','name','profile_image');
