@@ -13,39 +13,38 @@ use Illuminate\Support\Facades\Hash;
 class ProfileController extends Controller
 {
     //
-    public function updateImage(Request $req){
+    public function updateImage(Request $req)
+    {
 
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else
-        {
+        } else {
 
-        if(!$req->hasFile('image') || $token == ""){
-            return response()->json([
-                'isEmpty' => true,
-                'isError' => true,
-                'isAuthenticated' => true,
-                'message' => 'Either image or arugment is not provided.'
-            ]);
-            }else {
+            if (!$req->hasFile('image') || $token == "") {
+                return response()->json([
+                    'isEmpty' => true,
+                    'isError' => true,
+                    'isAuthenticated' => true,
+                    'message' => 'Either image or arugment is not provided.'
+                ]);
+            } else {
 
                 $file = $req->file('image');
                 $path = "./profile/";
                 $file_name = $file->getClientOriginalName();
                 $user_id = $user->user_id;
-                if($file->move($path,$file_name)){
+                if ($file->move($path, $file_name)) {
                     $u = User::find($user_id);
-                    $u->profile_image = asset("profile/")."/".$file_name;
+                    $u->profile_image = asset("profile/") . "/" . $file_name;
 
-                    if($u->save()){
+                    if ($u->save()) {
 
                         return response()->json([
                             'isEmpty' => false,
@@ -69,34 +68,32 @@ class ProfileController extends Controller
                     }
                 } else {
                     return response()->json([
-                            'isEmpty' => false,
-                            'isError' => true,
-                            'isAuthenticated' => true,
-                            'isMoved' => false,
-                            'isSaved' => false,
-                            'message' => 'Error occurred in saving the image. Try again.'
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isMoved' => false,
+                        'isSaved' => false,
+                        'message' => 'Error occurred in saving the image. Try again.'
                     ]);
                 }
-
             }
         }
-
     }
 
-    public function updateDescription(Request $req){
+    public function updateDescription(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
         $desc = $req->input('description');
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
-            if($token == "" || $desc == ""){
+        } else {
+            if ($token == "" || $desc == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
@@ -105,7 +102,7 @@ class ProfileController extends Controller
                 ]);
             } else {
                 $user->profile_description = $desc;
-                if($user->save()){
+                if ($user->save()) {
                     return response()->json([
                         'isEmpty' => false,
                         'isError' => false,
@@ -127,18 +124,18 @@ class ProfileController extends Controller
         }
     }
 
-    public function getProfileStats(Request $req){
+    public function getProfileStats(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
-            if($token == ""){
+        } else {
+            if ($token == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
@@ -164,18 +161,18 @@ class ProfileController extends Controller
         }
     }
 
-    public function getProfileStatsForReact(Request $req){
+    public function getProfileStatsForReact(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
-            if($token == ""){
+        } else {
+            if ($token == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
@@ -185,20 +182,30 @@ class ProfileController extends Controller
             } else {
                 $user_s = User::getUserDetailsForProfile($user->user_id);
                 $stats = User::getUserAndStatsForProfile($user->user_id);
-                if($user_s->count() > 0 || sizeof($stats) > 0)
-                return response()->json([
-                    'isEmpty' => false,
-                    'isError' => false,
-                    'isFound' => true,
-                    'stats'=> $stats[0],
-                    'user' => $user_s->first(),
-                    'isAuthenticated' => true,
-                ]);
+
+                $statusObj = new Statuses();
+                $statuses =  $statusObj->getStatuses($user->user_id);
+
+                $swaps = new Swaps();
+                $s = $swaps->getSwapsTab($user->user_id);
+
+                if ($user_s->count() > 0 || sizeof($stats) > 0)
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => false,
+                        'isFound' => true,
+                        'stats' => $stats[0],
+                        'user' => $user_s->first(),
+                        'statuses' => $statuses,
+                        'swaps' => $s,
+                        'isAuthenticated' => true,
+                    ]);
             }
         }
     }
 
-    public function getProfileUserStats(Request $req){
+    public function getProfileUserStats(Request $req)
+    {
         $user_id = $req->input('id');
         $token = $req->input('token');
 
@@ -206,29 +213,41 @@ class ProfileController extends Controller
 
 
 
-            if($user_id == ""){
-                return response()->json([
-                    'isEmpty' => true,
-                    'isError' => true,
-                    'isAuthenticated' => true,
-                    'message' => 'Arguments required.'
-                ]);
-            } else {
-                $swaps = Swaps::where(['poster_user_id' => $user_id])->count();
-                $status = Statuses::where(['user_id' => $user_id])->count();
-                $followers = Followers::where(['followed_user_id' => $user_id])->count();
-                $user = User::where(['user_id' => $user_id])->select('profile_image','name','user_id')->first();
-        if($token != ""){
-        $verify = new VerifyToken();
-        $tuser = $verify->verifyTokenInDb($token);
-                if(!$tuser){
+        if ($user_id == "") {
             return response()->json([
-                'isAuthenticated' => false
+                'isEmpty' => true,
+                'isError' => true,
+                'isAuthenticated' => true,
+                'message' => 'Arguments required.'
             ]);
-        }
-        else {
- $isfollow = Followers::where(['followed_user_id' => $user_id, 'follower_user_id' => $tuser->user_id])->count();
- return response()->json([
+        } else {
+            $swaps = Swaps::where(['poster_user_id' => $user_id])->count();
+            $status = Statuses::where(['user_id' => $user_id])->count();
+            $followers = Followers::where(['followed_user_id' => $user_id])->count();
+            $user = User::where(['user_id' => $user_id])->select('profile_image', 'name', 'user_id')->first();
+            if ($token != "") {
+                $verify = new VerifyToken();
+                $tuser = $verify->verifyTokenInDb($token);
+                if (!$tuser) {
+                    return response()->json([
+                        'isAuthenticated' => false
+                    ]);
+                } else {
+                    $isfollow = Followers::where(['followed_user_id' => $user_id, 'follower_user_id' => $tuser->user_id])->count();
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => false,
+                        'isFound' => true,
+                        'swaps' => $swaps,
+                        'statuses' => $status,
+                        'followers' => $followers,
+                        'user' => $user,
+                        'isfollow' => $isfollow,
+                        'isAuthenticated' => true,
+                    ]);
+                }
+            } else {
+                return response()->json([
                     'isEmpty' => false,
                     'isError' => false,
                     'isFound' => true,
@@ -236,28 +255,13 @@ class ProfileController extends Controller
                     'statuses' => $status,
                     'followers' => $followers,
                     'user' => $user,
-                    'isfollow'=> $isfollow,
                     'isAuthenticated' => true,
                 ]);
-        }
-        }else {
-                 return response()->json([
-                    'isEmpty' => false,
-                    'isError' => false,
-                    'isFound' => true,
-                    'swaps' => $swaps,
-                    'statuses' => $status,
-                    'followers' => $followers,
-                    'user' => $user,
-                    'isAuthenticated' => true,
-                ]);
-        }
-
-
             }
-
+        }
     }
-    public function updateProfileDetails(Request $req){
+    public function updateProfileDetails(Request $req)
+    {
         $token = $req->input('token');
         $name = $req->input('name');
         $username = $req->input('username');
@@ -265,14 +269,13 @@ class ProfileController extends Controller
 
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
-            if($token == "" || $name == "" || $username == "" || $email == ""){
+        } else {
+            if ($token == "" || $name == "" || $username == "" || $email == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
@@ -283,7 +286,7 @@ class ProfileController extends Controller
                 $user->name = $name;
                 $user->username = $username;
                 $user->email = $email;
-                if($user->save()){
+                if ($user->save()) {
                     return response()->json([
                         'isEmpty' => false,
                         'isError' => false,
@@ -305,7 +308,8 @@ class ProfileController extends Controller
         }
     }
 
-    public function changePassword(Request $req){
+    public function changePassword(Request $req)
+    {
         $token = $req->input('token');
         $newpass = $req->input('newpass');
         $confirmpass = $req->input('confirmpass');
@@ -313,14 +317,13 @@ class ProfileController extends Controller
 
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
-            if($token == "" || $newpass == "" || $confirmpass == "" || $oldpass == ""){
+        } else {
+            if ($token == "" || $newpass == "" || $confirmpass == "" || $oldpass == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
@@ -328,7 +331,7 @@ class ProfileController extends Controller
                     'isAuthenticated' => true,
                     'message' => 'Arguments required.'
                 ]);
-            } else if($confirmpass != $newpass) {
+            } else if ($confirmpass != $newpass) {
                 return response()->json([
                     'isEmpty' => false,
                     'isError' => true,
@@ -337,7 +340,7 @@ class ProfileController extends Controller
                     'isAuthenticated' => true,
                     'message' => 'New and Confirm Password do not match.'
                 ]);
-            }else if(strlen($newpass) < 6){
+            } else if (strlen($newpass) < 6) {
                 return response()->json([
                     'isEmpty' => false,
                     'isError' => true,
@@ -347,30 +350,30 @@ class ProfileController extends Controller
                     'isLengthError' => true,
                     'message' => 'New Password Length must be at least characters Long.'
                 ]);
-            } else if(Hash::check($oldpass,$user->password)){
-                    $user->password = Hash::make($newpass);
-                    if($user->save()){
-                        return response()->json([
-                            'isEmpty' => false,
-                            'isError' => false,
-                            'isNotMatched' => false,
-                            'isOldPasswordInCorrect' => false,
-                            'isAuthenticated' => true,
-                            'isChanged' => true,
-                            'message' => 'Password Changed.'
-                        ]);
-                    }else {
-                        return response()->json([
-                            'isEmpty' => false,
-                            'isError' => true,
-                            'isNotMatched' => false,
-                            'isOldPasswordInCorrect' => false,
-                            'isAuthenticated' => true,
-                            'isChanged' => false,
-                            'message' => 'Error Occurred in changing the password. Try again.'
-                        ]);
-                    }
-            }else {
+            } else if (Hash::check($oldpass, $user->password)) {
+                $user->password = Hash::make($newpass);
+                if ($user->save()) {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => false,
+                        'isNotMatched' => false,
+                        'isOldPasswordInCorrect' => false,
+                        'isAuthenticated' => true,
+                        'isChanged' => true,
+                        'message' => 'Password Changed.'
+                    ]);
+                } else {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isNotMatched' => false,
+                        'isOldPasswordInCorrect' => false,
+                        'isAuthenticated' => true,
+                        'isChanged' => false,
+                        'message' => 'Error Occurred in changing the password. Try again.'
+                    ]);
+                }
+            } else {
                 return response()->json([
                     'isEmpty' => false,
                     'isError' => true,

@@ -86,4 +86,15 @@ class User extends Authenticatable
         return User::where(['user_id' => $user_id])
         ->select('user_id','name','profile_image','profile_description');
     }
+
+    public static function getUnfollowedUsers($user_id){
+        return DB::select("
+        SELECT users.user_id,name,username,profile_image,created_at,
+(select count(*) from followers where followed_user_id = users.user_id AND follower_user_id = $user_id) as isFollowed,
+(select count(*) from followers where followed_user_id = users.user_id) as followers,
+(select count(*) from followers where follower_user_id = users.user_id) as followed
+ FROM users WHERE users.user_id != $user_id
+
+        ", [1]);
+    }
 }
