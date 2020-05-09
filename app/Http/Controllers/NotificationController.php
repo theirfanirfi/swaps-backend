@@ -11,30 +11,30 @@ class NotificationController extends Controller
 {
     //
 
-    public function getNotifications(Request $req){
+    public function getNotifications(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getNotifications($user->user_id);
             $count = $noc->count();
-            if($count > 0){
+            if ($count > 0) {
                 $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $n
-            ]);
-            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $n
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
@@ -43,30 +43,30 @@ class NotificationController extends Controller
         }
     }
 
-    public function getNotificationsForReactWeb(Request $req){
+    public function getNotificationsForReactWeb(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getNotificationsForReactWeb($user->user_id);
             $count = sizeof($noc);
-            if($count > 0){
+            if ($count > 0) {
                 // $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $noc
-            ]);
-            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $noc
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
@@ -76,30 +76,30 @@ class NotificationController extends Controller
     }
 
 
-    public function getSwapRequestNotifications(Request $req){
+    public function getSwapRequestNotifications(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getSwapRequests($user->user_id);
             $count = $noc->count();
-            if($count > 0){
+            if ($count > 0) {
                 $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $n
-            ]);
-            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $n
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
@@ -108,30 +108,30 @@ class NotificationController extends Controller
         }
     }
 
-    public function getSwapRequestNotificationsForReactWeb(Request $req){
+    public function getSwapRequestNotificationsForReactWeb(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getSwapRequestsForReactWeb($user->user_id);
             $count = sizeof($noc);
-            if($count > 0){
-               // $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $noc
-            ]);
-            }else {
+            if ($count > 0) {
+                // $n = $noc->get();
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $noc
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
@@ -140,30 +140,30 @@ class NotificationController extends Controller
         }
     }
 
-    public function getSwapRequestNotificationsForBackground(Request $req){
+    public function getSwapRequestNotificationsForBackground(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getSwapRequests($user->user_id);
             $count = $noc->count();
-            if($count > 0){
+            if ($count > 0) {
                 $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $n
-            ]);
-            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $n
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,
@@ -173,18 +173,18 @@ class NotificationController extends Controller
     }
 
 
-    public function getNotificationsCount(Request $req){
+    public function getNotificationsCount(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $n = $n->getNotifications($user->user_id)->count();
             return response()->json([
@@ -192,21 +192,20 @@ class NotificationController extends Controller
                 'notifications_count' => $n
             ]);
         }
-
     }
 
-    public function getSwapNotificationsCount(Request $req){
+    public function getSwapNotificationsCount(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $n = $n->getSwapRequests($user->user_id)->count();
             return response()->json([
@@ -214,7 +213,6 @@ class NotificationController extends Controller
                 'notifications_count' => $n
             ]);
         }
-
     }
 
     // public function approveSwap(Request $req){
@@ -283,32 +281,32 @@ class NotificationController extends Controller
     //     }
     // }
 
-    public function clear(Request $req){
+    public function clear(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
         $notification_id = $req->input('id');
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
 
-            if($token == null || $notification_id == null){
+            if ($token == null || $notification_id == null) {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isError' => true,
                     'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
-            }else {
+            } else {
                 $no = Notifications::where(['notification_id' => $notification_id]);
-                if($no->count() > 0){
+                if ($no->count() > 0) {
 
-                    if($no->delete()){
+                    if ($no->delete()) {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => false,
@@ -316,7 +314,7 @@ class NotificationController extends Controller
                             'isCleared' => true,
                             'message' => 'Notification Cleared.'
                         ]);
-                    }else {
+                    } else {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => true,
@@ -325,8 +323,7 @@ class NotificationController extends Controller
                             'message' => 'Error occurred in clearing the Notification. Try again.'
                         ]);
                     }
-
-                }else {
+                } else {
                     return response()->json([
                         'isAuthenticated' => true,
                         'isError' => false,
@@ -340,36 +337,36 @@ class NotificationController extends Controller
     }
 
 
-    public function approveSwap(Request $req){
+    public function approveSwap(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
         $notification_id = $req->input('notification_id');
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
 
-            if($token == null || $notification_id == null){
+            if ($token == null || $notification_id == null) {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isError' => true,
                     'isEmpty' => true,
                     'message' => 'Arguments must be provide.'
                 ]);
-            }else {
+            } else {
                 //$swap = Swaps::where(['notification_id' => $swap_id]);
                 $notification = Notifications::where(['notification_id' => $notification_id]);
-                if($notification->count() > 0){
+                if ($notification->count() > 0) {
 
                     //$swap = $swap->first();
                     $notification = $notification->first();
 
-                   // $swap->is_accepted = 1;
+                    // $swap->is_accepted = 1;
                     $notification->isAccepted = 1;
                     $swap = new Swaps();
                     $noti = $notification->first();
@@ -378,7 +375,7 @@ class NotificationController extends Controller
                     $swap->status_id = $noti->status_id;
                     $swap->is_accepted = 1;
 
-                    if($notification->save() && $swap->save()){
+                    if ($notification->save() && $swap->save()) {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => false,
@@ -386,7 +383,7 @@ class NotificationController extends Controller
                             'isApproved' => true,
                             'message' => 'Swap Accepted.'
                         ]);
-                    }else {
+                    } else {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => true,
@@ -395,40 +392,35 @@ class NotificationController extends Controller
                             'message' => 'Error occurred in accepting the Swap. Try again.'
                         ]);
                     }
-
-
-
-                }else {
+                } else {
                     return response()->json([
                         'isAuthenticated' => true,
                         'isError' => true,
                         'isEmpty' => false,
                         'message' => 'No such swap request found.'
                     ]);
-
                 }
-
             }
         }
     }
 
 
 
-    public function declineSwap(Request $req){
+    public function declineSwap(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
         $notification_id = $req->input('notification_id');
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
 
-            if($token == null || $notification_id == null){
+            if ($token == null || $notification_id == null) {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isError' => true,
@@ -436,18 +428,18 @@ class NotificationController extends Controller
                     'isDeclined' => false,
                     'message' => 'Arguments must be provided.'
                 ]);
-            }else {
+            } else {
                 //$swap = Swaps::where(['notification_id' => $swap_id]);
                 $notification = Notifications::where(['notification_id' => $notification_id]);
-                if($notification->count() > 0){
+                if ($notification->count() > 0) {
 
                     //$swap = $swap->first();
                     $notification = $notification->first();
 
-                   // $swap->is_accepted = 1;
+                    // $swap->is_accepted = 1;
                     $notification->isDeclined = 1;
 
-                    if($notification->save()){
+                    if ($notification->save()) {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => false,
@@ -455,7 +447,7 @@ class NotificationController extends Controller
                             'isDeclined' => true,
                             'message' => 'Swap request declined.'
                         ]);
-                    }else {
+                    } else {
                         return response()->json([
                             'isAuthenticated' => true,
                             'isError' => true,
@@ -464,10 +456,7 @@ class NotificationController extends Controller
                             'message' => 'Error occurred in declining the Swap. Try again.'
                         ]);
                     }
-
-
-
-                }else {
+                } else {
                     return response()->json([
                         'isAuthenticated' => true,
                         'isError' => true,
@@ -476,39 +465,37 @@ class NotificationController extends Controller
                         'isDeclined' => false,
 
                     ]);
-
                 }
-
             }
         }
     }
 
 
-    public function getNotificationsForService(Request $req){
+    public function getNotificationsForService(Request $req)
+    {
         $token = $req->input('token');
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
 
-        if(!$user){
+        if (!$user) {
             return response()->json([
                 'isError' => false,
                 'isAuthenticated' => false,
                 'message' => 'Not authenticated'
             ]);
-        }
-        else{
+        } else {
             $n = new Notifications();
             $noc = $n->getNotifications($user->user_id);
             $count = $noc->count();
-            if($count > 0){
+            if ($count > 0) {
                 $n = $noc->get();
-            return response()->json([
-                'isAuthenticated' => true,
-                'isFound' => true,
-                'count' => $count,
-                'notifications' => $n
-            ]);
-            }else {
+                return response()->json([
+                    'isAuthenticated' => true,
+                    'isFound' => true,
+                    'count' => $count,
+                    'notifications' => $n
+                ]);
+            } else {
                 return response()->json([
                     'isAuthenticated' => true,
                     'isFound' => false,

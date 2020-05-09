@@ -385,4 +385,140 @@ class ProfileController extends Controller
             }
         }
     }
+
+
+    public function uploadCoverImageReactWeb(Request $req)
+    {
+        $token = $req->input('token');
+
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        if (!$user) {
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        } else {
+            if ($token == "" || !$req->hasFile('image')) {
+                return response()->json([
+                    'isEmpty' => true,
+                    'isError' => true,
+                    'isNotMatched' => false,
+                    'isAuthenticated' => true,
+                    'message' => 'Arguments required.'
+                ]);
+            } else {
+
+                $file = $req->file('image');
+                $path = "./profile/";
+                $file_name = $file->getClientOriginalName();
+                $user_id = $user->user_id;
+                if ($file->move($path, $file_name)) {
+                    $u = User::find($user_id);
+                    $u->cover_image = $file_name;
+
+                    if ($u->save()) {
+
+                        return response()->json([
+                            'isEmpty' => false,
+                            'isError' => false,
+                            'isAuthenticated' => true,
+                            'isMoved' => true,
+                            'isSaved' => true,
+                            'user' => $u,
+                            'message' => 'Cover image changed.'
+                        ]);
+                    } else {
+
+                        return response()->json([
+                            'isEmpty' => true,
+                            'isError' => false,
+                            'isAuthenticated' => true,
+                            'isMoved' => true,
+                            'isSaved' => false,
+                            'message' => 'Error occurred in saving the image. Try again.'
+                        ]);
+                    }
+                } else {
+
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isMoved' => false,
+                        'isSaved' => false,
+                        'message' => 'Error occurred in uploading the image. Try again.'
+                    ]);
+                }
+            }
+        }
+    }
+
+
+    public function uploadProfileImageReactWeb(Request $req)
+    {
+        $token = $req->input('token');
+
+        $verify = new VerifyToken();
+        $user = $verify->verifyTokenInDb($token);
+        if (!$user) {
+            return response()->json([
+                'isAuthenticated' => false,
+                'message' => 'Not authenticated'
+            ]);
+        } else {
+            if ($token == "" || !$req->hasFile('image')) {
+                return response()->json([
+                    'isEmpty' => true,
+                    'isError' => true,
+                    'isNotMatched' => false,
+                    'isAuthenticated' => true,
+                    'message' => 'Arguments required.'
+                ]);
+            } else {
+
+                $file = $req->file('image');
+                $path = "./profile/";
+                $file_name = $file->getClientOriginalName();
+                $user_id = $user->user_id;
+                if ($file->move($path, $file_name)) {
+                    $u = User::find($user_id);
+                    $u->profile_image = $file_name;
+
+                    if ($u->save()) {
+
+                        return response()->json([
+                            'isEmpty' => false,
+                            'isError' => false,
+                            'isAuthenticated' => true,
+                            'isMoved' => true,
+                            'isSaved' => true,
+                            'user' => $u,
+                            'message' => 'Profile image changed.'
+                        ]);
+                    } else {
+
+                        return response()->json([
+                            'isEmpty' => true,
+                            'isError' => false,
+                            'isAuthenticated' => true,
+                            'isMoved' => true,
+                            'isSaved' => false,
+                            'message' => 'Error occurred in saving the image. Try again.'
+                        ]);
+                    }
+                } else {
+
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isMoved' => false,
+                        'isSaved' => false,
+                        'message' => 'Error occurred in uploading the image. Try again.'
+                    ]);
+                }
+            }
+        }
+    }
 }

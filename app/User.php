@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use DB;
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -30,31 +31,31 @@ class User extends Authenticatable
     ];
 
 
-    public function searchUsers($keyword, $user_id){
+    public function searchUsers($keyword, $user_id)
+    {
 
-    //     $users = User::where('name','like','%'.$keyword.'%')->where('user_id', '!=', $user_id)
-    //     ->leftjoin('followers', function($join) use ($user_id) {
+        //     $users = User::where('name','like','%'.$keyword.'%')->where('user_id', '!=', $user_id)
+        //     ->leftjoin('followers', function($join) use ($user_id) {
 
-    //     })
-    //    // ->leftjoin('followers', ['followed_user_id' => 'users.user_id'])->where(['follower_user_id' => $user_id])
-    //     ->select('f_id','follower_user_id','users.user_id','name','username','profile_image')
-    //     //
-    //     ;
+        //     })
+        //    // ->leftjoin('followers', ['followed_user_id' => 'users.user_id'])->where(['follower_user_id' => $user_id])
+        //     ->select('f_id','follower_user_id','users.user_id','name','username','profile_image')
+        //     //
+        //     ;
 
-    $users = User::where('name','like','%'.$keyword.'%')->where('user_id', '!=', $user_id);
+        $users = User::where('name', 'like', '%' . $keyword . '%')->where('user_id', '!=', $user_id);
 
-    $followers = DB::table('followers')->rightJoinSub($users,'fali',function($join) use ($user_id) {
-        $join->on('fali.user_id','=','followers.followed_user_id')
-        ->where(['follower_user_id' => $user_id])
-        ;
-    })
-    ->select('f_id','fali.user_id','name','username','profile_image')
-    ;
+        $followers = DB::table('followers')->rightJoinSub($users, 'fali', function ($join) use ($user_id) {
+            $join->on('fali.user_id', '=', 'followers.followed_user_id')
+                ->where(['follower_user_id' => $user_id]);
+        })
+            ->select('f_id', 'fali.user_id', 'name', 'username', 'profile_image');
 
         return $followers;
     }
 
-    public static function searchUsersForReact($keyword,$user_id){
+    public static function searchUsersForReact($keyword, $user_id)
+    {
         return DB::select("
         SELECT users.user_id,name,username,profile_image,created_at,
 (select count(*) from followers where followed_user_id = users.user_id AND follower_user_id = $user_id) as isFollowed,
@@ -65,12 +66,14 @@ class User extends Authenticatable
         ", [1]);
     }
 
-    public static function getUserForTaging($user_id){
+    public static function getUserForTaging($user_id)
+    {
         return User::where(['user_id' => $user_id])
-        ->select('user_id','name','profile_image');
+            ->select('user_id', 'name', 'profile_image');
     }
 
-    public static function getUserAndStatsForProfile($user_id){
+    public static function getUserAndStatsForProfile($user_id)
+    {
         return $profile = DB::select("
 
         SELECT avg(review_rating) as avg_ratting, count(*) as reviews_count,
@@ -82,12 +85,14 @@ class User extends Authenticatable
         ", [1]);
     }
 
-    public static function getUserDetailsForProfile($user_id){
+    public static function getUserDetailsForProfile($user_id)
+    {
         return User::where(['user_id' => $user_id])
-        ->select('user_id','name','profile_image','profile_description');
+            ->select('user_id', 'name', 'profile_image', 'profile_description', 'cover_image');
     }
 
-    public static function getUnfollowedUsers($user_id){
+    public static function getUnfollowedUsers($user_id)
+    {
         return DB::select("
         SELECT users.user_id,name,username,profile_image,created_at,
 (select count(*) from followers where followed_user_id = users.user_id AND follower_user_id = $user_id) as isFollowed,
