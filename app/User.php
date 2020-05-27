@@ -88,7 +88,7 @@ class User extends Authenticatable
     public static function getUserDetailsForProfile($user_id)
     {
         return User::where(['user_id' => $user_id])
-            ->select('user_id', 'name', 'profile_image', 'profile_description', 'cover_image');
+            ->select('user_id', 'name', 'profile_image', 'email', 'profile_description', 'cover_image', 'fb_profile_link', 'twitter_profile_link', 'insta_profile_link', 'linkedin_profile_link');
     }
 
     public static function getUnfollowedUsers($user_id)

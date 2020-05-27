@@ -137,6 +137,7 @@ WHERE followed_id = $user_id AND isAction = 1 AND action_by != $user_id
 (select users.name from status_tags LEFT JOIN users on users.user_id = status_tags.`tagged_user_id` WHERE status_tags.status_id = statuses.`status_id` LIMIT 1) as first_tag,
 (select avg(rattings.ratting) from rattings WHERE rattings.status_id = statuses.status_id) as ratting,
 (select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id`) as likes_count,
+(select count(*) from swaps as swp WHERE swp.swap_id = swaps.swap_id and is_modification_requested = 1 and modification_requested_by = $user_id) as is_modification_requested_by_me,
 (select count(*) from statuslikes WHERE statuslikes.`status_id` = statuses.`status_id` AND statuslikes.`user_id` = $user_id) as isLiked,
 
 (select count(*) from status_shares WHERE status_shares.`status_id` = statuses.`status_id`) as shares_count,
@@ -145,7 +146,7 @@ WHERE followed_id = $user_id AND isAction = 1 AND action_by != $user_id
 LEFT JOIN users as poster on poster.user_id = swaps.poster_user_id
 LEFT JOIN statuses on statuses.status_id = swaps.status_id
 LEFT JOIN users as swaper on swaper.user_id = swaps.swaper_id
-where swaped_with_user_id = $user_id and (is_accepted = 0 and is_rejected = 0)
+where swaped_with_user_id = $user_id or (swaper_id = $user_id and is_modification_requested = 1) and (is_accepted = 0 and is_rejected = 0)
 
         ", [1]);
         return $requests;

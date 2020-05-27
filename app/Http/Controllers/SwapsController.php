@@ -171,6 +171,63 @@ class SwapsController extends Controller
         }
     }
 
+    public function requestmodification(Request $req)
+    {
+        $token = $req->input('token');
+        $startdate = $req->input('sd');
+        $enddate = $req->input('ed');
+        $swap_id = $req->input('id');
+
+
+        if ($swap_id == "" || $token == "" || empty($token) || $startdate == "" || $enddate == "") {
+            return response()->json([
+                'isAuthenticated' => false,
+                'isError' => true,
+                'message' => 'Arguments must be provided.'
+            ]);
+        } else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+            if (!$user) {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'isError' => true,
+                    'message' => 'you are not logged in to perform this action'
+                ]);
+            } else {
+                $swap = Swaps::where(['swap_id' => $swap_id, 'is_accepted' => 0]);
+                if ($swap->count() > 0) {
+                    $swap = $swap->first();
+                    $swap->is_modification_requested = 1;
+                    $swap->swap_start_date = $startdate;
+                    $swap->swap_end_date = $enddate;
+                    $swap->modification_requested_by = $user->user_id;
+
+                    if ($swap->save()) {
+                        return response()->json([
+                            'isAuthenticated' => false,
+                            'isError' => false,
+                            'isModified' => true,
+                            'message' => 'Modification requested'
+                        ]);
+                    } else {
+                        return response()->json([
+                            'isAuthenticated' => false,
+                            'isError' => true,
+                            'message' => 'Modification request failed. Please try again.'
+                        ]);
+                    }
+                } else {
+                    return response()->json([
+                        'isAuthenticated' => false,
+                        'isError' => true,
+                        'message' => 'No such swap request found to modify.'
+                    ]);
+                }
+            }
+        }
+    }
+
 
 
     public function getSwapReviewsForUserProfile(Request $req)

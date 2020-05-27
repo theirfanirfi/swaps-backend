@@ -65,11 +65,13 @@ Route::group(['prefix' => 'swaps', 'middleware' => 'cors'], function () {
     Route::get('/requestmodification', 'SwapsController@requestmodification');
 });
 
-Route::group(['prefix' => 'auth'], function () {
+Route::group(['prefix' => 'auth', 'middleware' => 'cors'], function () {
     Route::get('/', 'LoginController@checktoken');
     Route::get('/login/{data}', 'LoginController@login')->name('login');
+    Route::get('/loginr', 'LoginController@loginReact');
     Route::get('register/{data}', 'LoginController@register');
-    Route::post('slogin', 'LoginController@slogin')->name('slogin');
+    Route::get('registerr', 'LoginController@registerReact');
+    Route::get('slogin', 'LoginController@slogin')->name('slogin');
 });
 
 Route::group(['prefix' => 'rating'], function () {
@@ -85,10 +87,14 @@ Route::group(['prefix' => 'profile', 'middleware' => 'cors'], function () {
     Route::get('/getProfileStatsr', 'ProfileController@getProfileStatsForReact');
     Route::get('/getProfileUserStats', 'ProfileController@getProfileUserStats');
     Route::get('/updateProfileDetails', 'ProfileController@updateProfileDetails');
-    Route::get('/changePassword', 'ProfileController@changePassword');
+    Route::get('/updateprofile', 'ProfileController@updateProfileDetailsForReact');
+    Route::get('/changepassword', 'ProfileController@changePassword');
     Route::get('/swapreviews', 'SwapsController@getSwapReviewsForUserProfile');
     Route::post('/uploadcover', 'ProfileController@uploadCoverImageReactWeb');
     Route::post('/uploadprofile', 'ProfileController@uploadProfileImageReactWeb');
+    Route::get('/getprofiledetails', 'ProfileController@getprofiledetailsForReact');
+    Route::get('/getprofilesmlinks', 'ProfileController@getprofilesmlinks');
+    Route::get('/updatesml', 'ProfileController@updateprofilesocialMediaLinks');
 });
 
 Route::group(['prefix' => 'notifications', 'middleware' => 'cors'], function () {

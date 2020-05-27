@@ -161,6 +161,91 @@ class ProfileController extends Controller
         }
     }
 
+    public function getprofilesmlinks(Request $req)
+    {
+        $token = $req->input('token');
+        if ($token == "") {
+            return response()->json([
+                'isEmpty' => true,
+                'isError' => true,
+                'isAuthenticated' => false,
+                'isError' => true,
+                'message' => 'Arguments required.'
+            ]);
+        } else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+
+            if (!$user) {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'message' => 'Not authenticated'
+                ]);
+            } else {
+                $profile = User::getUserDetailsForProfile($user->user_id);
+                if ($profile->count() > 0) {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => false,
+                        'isFound' => true,
+                        'profile' => $profile->first(),
+                        'isAuthenticated' => true,
+                    ]);
+                } else {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isFound' => false,
+                        'isAuthenticated' => true,
+                        'message' => 'Profile not found'
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function getprofiledetailsForReact(Request $req)
+    {
+        $token = $req->input('token');
+        if ($token == "") {
+            return response()->json([
+                'isEmpty' => true,
+                'isError' => true,
+                'isAuthenticated' => false,
+                'message' => 'Arguments required.'
+            ]);
+        } else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+
+            if (!$user) {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'message' => 'Not authenticated'
+                ]);
+            } else {
+                $profile = User::getUserDetailsForProfile($user->user_id);
+                if ($profile->count() > 0) {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => false,
+                        'isFound' => true,
+                        'profile' => $profile->first(),
+                        'isAuthenticated' => true,
+                    ]);
+                } else {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isFound' => false,
+                        'isAuthenticated' => true,
+                        'message' => 'Profile not found'
+                    ]);
+                }
+            }
+        }
+    }
+
     public function getProfileStatsForReact(Request $req)
     {
         $token = $req->input('token');
@@ -308,12 +393,13 @@ class ProfileController extends Controller
         }
     }
 
-    public function changePassword(Request $req)
+
+    public function updateProfileDetailsForReact(Request $req)
     {
         $token = $req->input('token');
-        $newpass = $req->input('newpass');
-        $confirmpass = $req->input('confirmpass');
-        $oldpass = $req->input('oldpass');
+        $name = $req->input('name');
+        $profile_description = $req->input('description');
+        $email = $req->input('email');
 
         $verify = new VerifyToken();
         $user = $verify->verifyTokenInDb($token);
@@ -323,65 +409,130 @@ class ProfileController extends Controller
                 'message' => 'Not authenticated'
             ]);
         } else {
-            if ($token == "" || $newpass == "" || $confirmpass == "" || $oldpass == "") {
+            if ($token == "" || $name == "" || $profile_description == "" || $email == "") {
                 return response()->json([
                     'isEmpty' => true,
                     'isError' => true,
-                    'isNotMatched' => false,
                     'isAuthenticated' => true,
                     'message' => 'Arguments required.'
                 ]);
-            } else if ($confirmpass != $newpass) {
-                return response()->json([
-                    'isEmpty' => false,
-                    'isError' => true,
-                    'isNotMatched' => true,
-                    'isOldPasswordInCorrect' => false,
-                    'isAuthenticated' => true,
-                    'message' => 'New and Confirm Password do not match.'
-                ]);
-            } else if (strlen($newpass) < 6) {
-                return response()->json([
-                    'isEmpty' => false,
-                    'isError' => true,
-                    'isNotMatched' => false,
-                    'isOldPasswordInCorrect' => false,
-                    'isAuthenticated' => true,
-                    'isLengthError' => true,
-                    'message' => 'New Password Length must be at least characters Long.'
-                ]);
-            } else if (Hash::check($oldpass, $user->password)) {
-                $user->password = Hash::make($newpass);
+            } else {
+                $user->name = $name;
+                $user->profile_description = $profile_description;
+
+                if ($email != $user->email) {
+                    $check_email = User::where(['email' => $email]);
+                    if ($check_email->count() > 0) {
+                        return response()->json([
+                            'isEmpty' => false,
+                            'isError' => true,
+                            'isAuthenticated' => true,
+                            'message' => 'Email is already taken. Please use another one.'
+                        ]);
+                    } else {
+                        $user->email = $email;
+                    }
+                }
+
                 if ($user->save()) {
                     return response()->json([
                         'isEmpty' => false,
                         'isError' => false,
-                        'isNotMatched' => false,
-                        'isOldPasswordInCorrect' => false,
                         'isAuthenticated' => true,
-                        'isChanged' => true,
-                        'message' => 'Password Changed.'
+                        'isUpdated' => true,
+                        'user' => $user,
+                        'message' => 'Profile updated'
                     ]);
                 } else {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isAuthenticated' => true,
+                        'isUpdated' => false,
+                        'message' => 'Error occurred in Updating the profile. Try again.'
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function changePassword(Request $req)
+    {
+        $token = $req->input('token');
+        $newpass = $req->input('newpass');
+        $confirmpass = $req->input('confirmpass');
+        $oldpass = $req->input('oldpass');
+
+        if ($token == "" || $newpass == "" || $confirmpass == "" || $oldpass == "") {
+            return response()->json([
+                'isEmpty' => true,
+                'isError' => true,
+                'isNotMatched' => false,
+                'isAuthenticated' => true,
+                'message' => 'Arguments required.'
+            ]);
+        } else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+            if (!$user) {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'isError' => true,
+                    'message' => 'Not authenticated'
+                ]);
+            } else {
+                if ($confirmpass != $newpass) {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isNotMatched' => true,
+                        'isOldPasswordInCorrect' => false,
+                        'isAuthenticated' => true,
+                        'message' => 'New and Confirm Password do not match.'
+                    ]);
+                } else if (strlen($newpass) < 6) {
                     return response()->json([
                         'isEmpty' => false,
                         'isError' => true,
                         'isNotMatched' => false,
                         'isOldPasswordInCorrect' => false,
                         'isAuthenticated' => true,
-                        'isChanged' => false,
-                        'message' => 'Error Occurred in changing the password. Try again.'
+                        'isLengthError' => true,
+                        'message' => 'New Password Length must be at least 6 characters Long.'
+                    ]);
+                } else if (Hash::check($oldpass, $user->password)) {
+                    $user->password = Hash::make($newpass);
+                    if ($user->save()) {
+                        return response()->json([
+                            'isEmpty' => false,
+                            'isError' => false,
+                            'isNotMatched' => false,
+                            'isOldPasswordInCorrect' => false,
+                            'isAuthenticated' => true,
+                            'isChanged' => true,
+                            'message' => 'Password Changed.'
+                        ]);
+                    } else {
+                        return response()->json([
+                            'isEmpty' => false,
+                            'isError' => true,
+                            'isNotMatched' => false,
+                            'isOldPasswordInCorrect' => false,
+                            'isAuthenticated' => true,
+                            'isChanged' => false,
+                            'message' => 'Error Occurred in changing the password. Try again.'
+                        ]);
+                    }
+                } else {
+                    return response()->json([
+                        'isEmpty' => false,
+                        'isError' => true,
+                        'isNotMatched' => false,
+                        'isOldPasswordInCorrect' => true,
+                        'isAuthenticated' => true,
+                        'message' => 'Current Password is Incorrect.'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'isEmpty' => false,
-                    'isError' => true,
-                    'isNotMatched' => false,
-                    'isOldPasswordInCorrect' => true,
-                    'isAuthenticated' => true,
-                    'message' => 'Current Password is Incorrect.'
-                ]);
             }
         }
     }
@@ -516,6 +667,54 @@ class ProfileController extends Controller
                         'isMoved' => false,
                         'isSaved' => false,
                         'message' => 'Error occurred in uploading the image. Try again.'
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function updateprofilesocialMediaLinks(Request $req)
+    {
+        $token = $req->input('token');
+        $fb = $req->input('fb');
+        $tw = $req->input('tw');
+        $insta = $req->input('insta');
+        $ln = $req->input('ln');
+        if ($token == "" || $fb == "" || $tw == "" || $insta == "" || $ln == "") {
+            return response()->json([
+                'isEmpty' => true,
+                'isError' => true,
+                'isAuthenticated' => false,
+                'message' => 'Arguments required.'
+            ]);
+        } else {
+            $verify = new VerifyToken();
+            $user = $verify->verifyTokenInDb($token);
+            if (!$user) {
+                return response()->json([
+                    'isAuthenticated' => false,
+                    'isError' => true,
+                    'message' => 'Not authenticated'
+                ]);
+            } else {
+                $user->fb_profile_link = $fb;
+                $user->twitter_profile_link = $tw;
+                $user->insta_profile_link = $insta;
+                $user->linkedin_profile_link = $ln;
+
+                if ($user->save()) {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isUpated' => true,
+                        'isError' => false,
+                        'message' => 'Social Media Links added'
+                    ]);
+                } else {
+                    return response()->json([
+                        'isAuthenticated' => true,
+                        'isUpated' => false,
+                        'isError' => true,
+                        'message' => 'Error occurred in updating the profile. Please try again.'
                     ]);
                 }
             }
