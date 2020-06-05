@@ -112,6 +112,7 @@ Route::group(['prefix' => 'notifications', 'middleware' => 'cors'], function () 
 
 Route::group(['prefix' => 'participants', 'middleware' => 'cors'], function () {
     Route::get('/', 'ParticipantsController@getParticipants');
+    Route::get('/initiate', 'ParticipantsController@createParticipants');
 });
 
 Route::group(['prefix' => 'msg', 'middleware' => 'cors'], function () {
