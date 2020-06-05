@@ -51,7 +51,10 @@ class Followers extends Model
     public function getUsersForAtStartUp($user_id)
     {
         $users = DB::table('users')
-            ->where('users.user_id', '!=', $user_id);
+            ->where('users.user_id', '!=', $user_id)
+            ->select('user_id', 'name', 'profile_image')
+            ->inRandomOrder()
+            ->limit(10);
         return $users;
     }
 

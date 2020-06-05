@@ -107,7 +107,6 @@ class StatusController extends Controller
     {
         $token = $req->input('token');
         $statuss = $req->input('status');
-
         if ($token == null || $statuss == null) {
             return response()->json([
                 'isAuthenticated' => false,

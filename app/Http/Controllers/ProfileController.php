@@ -306,16 +306,24 @@ class ProfileController extends Controller
                 'message' => 'Arguments required.'
             ]);
         } else {
-            $swaps = Swaps::where(['poster_user_id' => $user_id])->count();
-            $status = Statuses::where(['user_id' => $user_id])->count();
-            $followers = Followers::where(['followed_user_id' => $user_id])->count();
-            $user = User::where(['user_id' => $user_id])->select('profile_image', 'name', 'user_id')->first();
+            // $swaps = Swaps::where(['poster_user_id' => $user_id])->count();
+            // $status = Statuses::where(['user_id' => $user_id])->count();
+            // $followers = Followers::where(['followed_user_id' => $user_id])->count();
+            $stats = User::getUserAndStatsForProfile($user_id);
+            $user = User::where(['user_id' => $user_id])->select('profile_image', 'name', 'user_id', 'cover_image')->first();
+            $statusObj = new Statuses();
+            $statuses =  $statusObj->getStatuses($user_id);
+
+            $swaps = new Swaps();
+            $s = $swaps->getSwapsTab($user_id);
             if ($token != "") {
                 $verify = new VerifyToken();
                 $tuser = $verify->verifyTokenInDb($token);
                 if (!$tuser) {
                     return response()->json([
-                        'isAuthenticated' => false
+                        'isAuthenticated' => false,
+                        'isError' => true,
+                        'message' => 'You are not logged in'
                     ]);
                 } else {
                     $isfollow = Followers::where(['followed_user_id' => $user_id, 'follower_user_id' => $tuser->user_id])->count();
@@ -323,11 +331,14 @@ class ProfileController extends Controller
                         'isEmpty' => false,
                         'isError' => false,
                         'isFound' => true,
-                        'swaps' => $swaps,
-                        'statuses' => $status,
-                        'followers' => $followers,
+                        // 'swaps' => $swaps,
+                        // 'statuses' => $status,
+                        // 'followers' => $followers,
                         'user' => $user,
                         'isfollow' => $isfollow,
+                        'stats' => $stats[0],
+                        'statuses' => $statuses,
+                        'swaps' => $s,
                         'isAuthenticated' => true,
                     ]);
                 }
@@ -336,10 +347,13 @@ class ProfileController extends Controller
                     'isEmpty' => false,
                     'isError' => false,
                     'isFound' => true,
-                    'swaps' => $swaps,
-                    'statuses' => $status,
-                    'followers' => $followers,
+                    // 'swaps' => $swaps,
+                    // 'statuses' => $status,
+                    // 'followers' => $followers,
                     'user' => $user,
+                    'stats' => $stats[0],
+                    'statuses' => $statuses,
+                    'swaps' => $s,
                     'isAuthenticated' => true,
                 ]);
             }
